@@ -10,7 +10,7 @@ public partial class Square : Button
 	Sprite2D pieceSprite;
 
 	[Signal]
-	public delegate void SquareClickedEventHandler(Square square);
+	public delegate void SquareClickedEventHandler(Square square, string button);
 
 	StyleBoxFlat normalStyle;
 	StyleBoxFlat hoverStyle;
@@ -90,6 +90,17 @@ public partial class Square : Button
 			AddThemeStyleboxOverride("normal", selectedStyle);
 		else
 			AddThemeStyleboxOverride("normal", normalStyle);
+	}
+
+	public override void _GuiInput(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
+		{
+			if (mouseButton.ButtonIndex == MouseButton.Left)
+				EmitSignal(SignalName.SquareClicked, this, "left");
+			else if (mouseButton.ButtonIndex == MouseButton.Right)
+				EmitSignal(SignalName.SquareClicked, this, "right");
+		}
 	}
 	
 }

@@ -22,7 +22,7 @@ public partial class Main : Control
 				square.X = x;
 				square.Y = y;
 
-				square.SquareClicked += OnSquareClicked;
+				square.SquareClicked += (s, button) => OnSquareClicked((Square)s, (string)button);
 
 				boardUI.AddChild(square);
 				square.SetPiece(board[x,y]);
@@ -61,8 +61,19 @@ public partial class Main : Control
 		board[7,7] = new Piece(PieceType.Rook, PieceColor.White);
 	}
 
-	void OnSquareClicked(Square square)
+	void OnSquareClicked(Square square, string button)
 	{
+		if (button == "right")
+		{
+			// Cancel selection
+			if (selectedSquare != null)
+			{
+				selectedSquare.SetSelected(false);
+				selectedSquare = null;
+			}
+			return;
+		}
+
 		Piece clickedPiece = board[square.X, square.Y];
 
 		// Nothing selected yet
