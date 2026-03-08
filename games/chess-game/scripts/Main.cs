@@ -3,10 +3,13 @@ using System;
 
 public partial class Main : Control
 {
-	// Called when the node enters the scene tree for the first time.
+	Piece[,] board = new Piece[8,8];
+
 	public override void _Ready()
 	{
-		GridContainer board = GetNode<GridContainer>("Board");
+		GridContainer boardUI = GetNode<GridContainer>("Board");
+
+		SetupBoard();
 
 		var squareScene = GD.Load<PackedScene>("res://scenes/Square.tscn");
 
@@ -15,17 +18,43 @@ public partial class Main : Control
 			for (int x = 0; x < 8; x++)
 			{
 				Square square = squareScene.Instantiate<Square>();
-
 				square.X = x;
 				square.Y = y;
 
-				board.AddChild(square);
+				boardUI.AddChild(square);
+				square.SetPiece(board[x,y]);
 			}
 		}
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	void SetupBoard()
 	{
+		// Black pieces
+		board[0,0] = new Piece(PieceType.Rook, PieceColor.Black);
+		board[1,0] = new Piece(PieceType.Knight, PieceColor.Black);
+		board[2,0] = new Piece(PieceType.Bishop, PieceColor.Black);
+		board[3,0] = new Piece(PieceType.Queen, PieceColor.Black);
+		board[4,0] = new Piece(PieceType.King, PieceColor.Black);
+		board[5,0] = new Piece(PieceType.Bishop, PieceColor.Black);
+		board[6,0] = new Piece(PieceType.Knight, PieceColor.Black);
+		board[7,0] = new Piece(PieceType.Rook, PieceColor.Black);
+
+		// Black pawns
+		for (int x = 0; x < 8; x++)
+			board[x,1] = new Piece(PieceType.Pawn, PieceColor.Black);
+
+		// White pawns
+		for (int x = 0; x < 8; x++)
+			board[x,6] = new Piece(PieceType.Pawn, PieceColor.White);
+
+		// White pieces
+		board[0,7] = new Piece(PieceType.Rook, PieceColor.White);
+		board[1,7] = new Piece(PieceType.Knight, PieceColor.White);
+		board[2,7] = new Piece(PieceType.Bishop, PieceColor.White);
+		board[3,7] = new Piece(PieceType.Queen, PieceColor.White);
+		board[4,7] = new Piece(PieceType.King, PieceColor.White);
+		board[5,7] = new Piece(PieceType.Bishop, PieceColor.White);
+		board[6,7] = new Piece(PieceType.Knight, PieceColor.White);
+		board[7,7] = new Piece(PieceType.Rook, PieceColor.White);
 	}
 }

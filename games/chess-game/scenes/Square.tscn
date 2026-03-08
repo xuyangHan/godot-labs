@@ -10,3 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_2g2a8")
+
+[node name="PieceSprite" type="Sprite2D" parent="." unique_id=921488757]
+position = Vector2(40, 40)
+scale = Vector2(0.625, 0.625)
