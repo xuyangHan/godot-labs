@@ -1,10 +1,12 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class Main : Control
 {
 	Piece[,] board = new Piece[8,8];
 	Square selectedSquare = null;
+	private List<Square> highlightedSquares = new List<Square>();
 
 	public override void _Ready()
 	{
@@ -65,17 +67,12 @@ public partial class Main : Control
 	{
 		if (button == "right")
 		{
-			// Cancel selection
-			if (selectedSquare != null)
-			{
-				selectedSquare.SetSelected(false);
-				selectedSquare = null;
-			}
+			ResetSelection();
 			return;
 		}
 
 		Piece clickedPiece = board[square.X, square.Y];
-
+		
 		// Nothing selected yet
 		if (selectedSquare == null)
 		{
@@ -83,12 +80,32 @@ public partial class Main : Control
 			{
 				selectedSquare = square;
 				square.SetSelected(true);
+
+				// highlight legal moves
+				var legalMovesofSelectedPiece = clickedPiece.GetLegalMoves(square.X, square.Y, board);
+				highlightedSquares.Clear();
+
+				foreach (var (lx, ly) in legalMovesofSelectedPiece)
+				{
+					Square moveSquare = GetSquare(lx, ly);
+					moveSquare.SetHighlight(true);
+					highlightedSquares.Add(moveSquare);
+				}
 			}
 			return;
 		}
 
 		// Move piece
 		Piece movingPiece = board[selectedSquare.X, selectedSquare.Y];
+		var legalMoves = movingPiece.GetLegalMoves(selectedSquare.X, selectedSquare.Y, board);
+
+		bool isLegal = legalMoves.Contains((square.X, square.Y));
+		if (!isLegal)
+		{
+			GD.Print("Illegal move");
+			ResetSelection();
+			return;
+		}
 
 		board[square.X, square.Y] = movingPiece;
 		board[selectedSquare.X, selectedSquare.Y] = null;
@@ -96,8 +113,35 @@ public partial class Main : Control
 		selectedSquare.SetSelected(false);
 		
 		RefreshBoard();
+		ResetSelection();
+	}
+
+	private Square GetSquare(int x, int y)
+	{
+		foreach (Square sq in GetNode<GridContainer>("Board").GetChildren())
+		{
+			if (sq.X == x && sq.Y == y)
+				return sq;
+		}
+		return null;
+	}
+
+	void ResetSelection()
+	{
+		if (selectedSquare != null)
+			selectedSquare.SetSelected(false);
 
 		selectedSquare = null;
+		ClearHighlights();
+	}
+	void ClearHighlights()
+	{
+		foreach (var sq in highlightedSquares)
+		{
+			sq.SetHighlight(false);
+		}
+
+		highlightedSquares.Clear();
 	}
 
 	void RefreshBoard()

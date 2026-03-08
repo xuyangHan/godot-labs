@@ -15,6 +15,7 @@ public partial class Square : Button
 	StyleBoxFlat normalStyle;
 	StyleBoxFlat hoverStyle;
 	StyleBoxFlat selectedStyle;
+	TextureRect highlight;
 
 	
 	// Called when the node enters the scene tree for the first time.
@@ -39,6 +40,27 @@ public partial class Square : Button
 		AddThemeStyleboxOverride("hover", hoverStyle);
 		AddThemeStyleboxOverride("pressed", normalStyle);
 		AddThemeStyleboxOverride("focus", normalStyle);
+
+		highlight = GetNode<TextureRect>("Highlight");
+		highlight.Visible = false;
+		highlight.Modulate = new Color(1, 1, 1, 0.5f); // half transparent
+
+		// make it stretch to fill the button (the square)
+		highlight.AnchorLeft = 0;
+		highlight.AnchorTop = 0;
+		highlight.AnchorRight = 1;
+		highlight.AnchorBottom = 1;
+
+		float marginX = 64 * 0.5f;
+		float marginY = 64 * 0.5f;
+
+		highlight.OffsetLeft = marginX;
+		highlight.OffsetTop = marginY;
+		highlight.OffsetRight = -marginX;
+		highlight.OffsetBottom = -marginY;
+
+		// scale the texture to fit perfectly
+		highlight.StretchMode = TextureRect.StretchModeEnum.Scale;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -90,6 +112,11 @@ public partial class Square : Button
 			AddThemeStyleboxOverride("normal", selectedStyle);
 		else
 			AddThemeStyleboxOverride("normal", normalStyle);
+	}
+
+	public void SetHighlight(bool highlightOn)
+	{
+		highlight.Visible = highlightOn;
 	}
 
 	public override void _GuiInput(InputEvent @event)

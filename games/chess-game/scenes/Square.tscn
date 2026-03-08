@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d1y0rx3o0ig1i"]
 
 [ext_resource type="Script" uid="uid://dy0ganr4uapsm" path="res://scripts/Square.cs" id="1_2g2a8"]
+[ext_resource type="Texture2D" uid="uid://chdhfqm8vb7pp" path="res://assets/ui/circle.png" id="2_lhkbq"]
 
 [node name="Square" type="Button" unique_id=724876190]
 custom_minimum_size = Vector2(80, 80)
@@ -14,3 +15,11 @@ script = ExtResource("1_2g2a8")
 [node name="PieceSprite" type="Sprite2D" parent="." unique_id=921488757]
 position = Vector2(40, 40)
 scale = Vector2(0.625, 0.625)
+
+[node name="Highlight" type="TextureRect" parent="." unique_id=1577037957]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_lhkbq")
+expand_mode = 1
+stretch_mode = 3

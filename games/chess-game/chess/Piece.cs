@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 public enum PieceType
 {
 	Pawn,
@@ -23,5 +26,232 @@ public class Piece
 	{
 		Type = type;
 		Color = color;
+	}
+
+	public List<(int x, int y)> GetLegalMoves(int fromX, int fromY, Piece[,] board)
+	{
+		switch (Type)
+		{
+			case PieceType.Pawn: return GetPawnMoves(fromX, fromY, board);
+			case PieceType.Knight: return GetKnightMoves(fromX, fromY, board);
+			case PieceType.Bishop: return GetBishopMoves(fromX, fromY, board);
+			case PieceType.Rook: return GetRookMoves(fromX, fromY, board);
+			case PieceType.Queen: return GetQueenMoves(fromX, fromY, board);
+			case PieceType.King: return GetKingMoves(fromX, fromY, board);
+			default: return new List<(int,int)>();
+		}
+	}
+
+	private bool IsPathClear(int x1, int y1, int x2, int y2, Piece[,] board)
+	{
+		int dx = Math.Sign(x2 - x1);
+		int dy = Math.Sign(y2 - y1);
+
+		int x = x1 + dx;
+		int y = y1 + dy;
+
+		while (x != x2 || y != y2)
+		{
+			if (board[x, y] != null)
+				return false;
+
+			x += dx;
+			y += dy;
+		}
+
+		return true;
+	}
+
+	private List<(int,int)> GetKnightMoves(int x, int y, Piece[,] board)
+	{
+		int[] dx = { 1, 2, 2, 1, -1, -2, -2, -1 };
+		int[] dy = { -2, -1, 1, 2, 2, 1, -1, -2 };
+
+		var moves = new List<(int,int)>();
+
+		for (int i = 0; i < dx.Length; i++)
+		{
+			int nx = x + dx[i];
+			int ny = y + dy[i];
+
+			if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8)
+				continue;
+
+			// Can move if square is empty or enemy piece
+			if (board[nx, ny] == null || board[nx, ny].Color != Color)
+				moves.Add((nx, ny));
+		}
+
+		return moves;
+	}
+
+	private List<(int,int)> GetPawnMoves(int x, int y, Piece[,] board)
+	{
+		var moves = new List<(int,int)>();
+
+		int direction = (Color == PieceColor.White) ? -1 : 1;
+		int startRow = (Color == PieceColor.White) ? 6 : 1;
+
+		int forward = y + direction;
+
+		// Move one square forward (must be empty)
+		if (forward >= 0 && forward < 8 && board[x, forward] == null)
+		{
+			moves.Add((x, forward));
+
+			// Move two squares from starting position (both empty)
+			int twoForward = y + direction * 2;
+			if (y == startRow && twoForward >= 0 && twoForward < 8 && board[x, twoForward] == null)
+			{
+				moves.Add((x, twoForward));
+			}
+		}
+
+		// Capture diagonally
+		int[] dx = { -1, 1 };
+		foreach (int offset in dx)
+		{
+			int nx = x + offset;
+			int ny = y + direction;
+
+			if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8)
+			{
+				if (board[nx, ny] != null && board[nx, ny].Color != Color)
+				{
+					moves.Add((nx, ny));
+				}
+			}
+		}
+
+		return moves;
+	}
+
+	private List<(int,int)> GetKingMoves(int x, int y, Piece[,] board)
+	{
+		var moves = new List<(int,int)>();
+
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				if (dx == 0 && dy == 0)
+					continue;
+
+				int nx = x + dx;
+				int ny = y + dy;
+
+				if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8)
+					continue;
+
+				if (board[nx, ny] == null || board[nx, ny].Color != Color)
+				{
+					moves.Add((nx, ny));
+				}
+			}
+		}
+
+		return moves;
+	}
+
+	private List<(int,int)> GetBishopMoves(int x, int y, Piece[,] board)
+	{
+		var moves = new List<(int,int)>();
+
+		int[] directions = { -1, 1 };
+
+		foreach (int dx in directions)
+		{
+			foreach (int dy in directions)
+			{
+				int nx = x + dx;
+				int ny = y + dy;
+
+				while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8)
+				{
+					if (board[nx, ny] == null)
+					{
+						moves.Add((nx, ny));
+					}
+					else
+					{
+						// Can capture enemy piece but cannot go past it
+						if (board[nx, ny].Color != Color)
+							moves.Add((nx, ny));
+
+						break;
+					}
+
+					nx += dx;
+					ny += dy;
+				}
+			}
+		}
+
+		return moves;
+	}
+
+	private List<(int,int)> GetRookMoves(int x, int y, Piece[,] board)
+	{
+		var moves = new List<(int,int)>();
+
+		int[] directions = { -1, 1 };
+
+		// Horizontal
+		foreach (int dx in directions)
+		{
+			int nx = x + dx;
+
+			while (nx >= 0 && nx < 8)
+			{
+				if (board[nx, y] == null)
+				{
+					moves.Add((nx, y));
+				}
+				else
+				{
+					if (board[nx, y].Color != Color)
+						moves.Add((nx, y));
+
+					break;
+				}
+
+				nx += dx;
+			}
+		}
+
+		// Vertical
+		foreach (int dy in directions)
+		{
+			int ny = y + dy;
+
+			while (ny >= 0 && ny < 8)
+			{
+				if (board[x, ny] == null)
+				{
+					moves.Add((x, ny));
+				}
+				else
+				{
+					if (board[x, ny].Color != Color)
+						moves.Add((x, ny));
+
+					break;
+				}
+
+				ny += dy;
+			}
+		}
+
+		return moves;
+	}
+
+	private List<(int,int)> GetQueenMoves(int x, int y, Piece[,] board)
+	{
+		var moves = new List<(int,int)>();
+
+		moves.AddRange(GetRookMoves(x, y, board));
+		moves.AddRange(GetBishopMoves(x, y, board));
+
+		return moves;
 	}
 }
