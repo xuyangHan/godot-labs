@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://l41k4m2kd4oq"]
 
 [ext_resource type="Script" uid="uid://b5g1se1dfd7l8" path="res://scripts/Main.cs" id="1_elqb8"]
+[ext_resource type="AudioStream" uid="uid://nsykkmnt2uw8" path="res://assets/sounds/move.wav" id="2_rvslj"]
+[ext_resource type="AudioStream" uid="uid://ctq3pf70d0xuj" path="res://assets/sounds/castle.wav" id="3_0bbpv"]
 
 [node name="Main" type="Control" unique_id=1827929679]
 layout_mode = 3
@@ -28,3 +30,9 @@ grow_vertical = 2
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 8
+
+[node name="MoveSound" type="AudioStreamPlayer" parent="." unique_id=924188630]
+stream = ExtResource("2_rvslj")
+
+[node name="CaptureSound" type="AudioStreamPlayer" parent="." unique_id=507332864]
+stream = ExtResource("3_0bbpv")

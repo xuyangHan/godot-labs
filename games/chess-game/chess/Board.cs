@@ -40,10 +40,28 @@ public class Board
         return piece.GetLegalMoves(x, y, board);
     }
 
-    public void MovePiece(int fromX, int fromY, int toX, int toY)
+    public MoveResult MovePiece(int fromX, int fromY, int toX, int toY)
     {
-        board[toX, toY] = board[fromX, fromY];
-        board[fromX, fromY] = null;
+		Piece movingPiece = board[fromX, fromY];
+		Piece targetPiece = board[toX, toY];
+
+		if (movingPiece == null)
+			return MoveResult.Illegal;
+
+		// capture
+		if (targetPiece != null)
+		{
+			board[toX, toY] = movingPiece;
+			board[fromX, fromY] = null;
+
+			return MoveResult.Capture;
+		}
+
+		// normal move
+		board[toX, toY] = movingPiece;
+		board[fromX, fromY] = null;
+
+		return MoveResult.Normal;
     }
 
     public Piece GetPiece(int x, int y) => board[x, y];

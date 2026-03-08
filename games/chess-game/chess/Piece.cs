@@ -235,3 +235,11 @@ public class Piece
 		return moves;
 	}
 }
+
+public enum MoveResult
+{
+	Normal,
+	Capture,
+	Castle,
+	Illegal
+}

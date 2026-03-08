@@ -10,6 +10,9 @@ public partial class Main : Control
 
 	public PackedScene squareScene;
 
+	private AudioStreamPlayer moveSound;
+	private AudioStreamPlayer captureSound;
+
 	public override void _Ready()
 	{
 		// Load square scene
@@ -30,6 +33,9 @@ public partial class Main : Control
 		{
 			sq.SquareClicked += (s, button) => OnSquareClicked((Square)s, (string)button);
 		}
+
+		moveSound = GetNode<AudioStreamPlayer>("MoveSound");
+		captureSound = GetNode<AudioStreamPlayer>("CaptureSound");
 
 		// Refresh initial board
 		RefreshBoard();
@@ -69,7 +75,21 @@ public partial class Main : Control
 			return;
 		}
 
-		board.MovePiece(selected.X, selected.Y, square.X, square.Y);
+		var moveResult = board.MovePiece(selected.X, selected.Y, square.X, square.Y);
+		switch (moveResult)
+		{
+			case MoveResult.Normal:
+				moveSound.Play();
+				break;
+
+			case MoveResult.Capture:
+				captureSound.Play();
+				break;
+
+			// case MoveResult.Castle:
+			// 	castleSound.Play();
+			// 	break;
+		}
 		
 		RefreshBoard();
 		selectionManager.ResetSelection();
