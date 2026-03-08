@@ -8,7 +8,7 @@ public partial class Main : Control
 	{
 		GridContainer board = GetNode<GridContainer>("Board");
 
-		var squareScene = GD.Load<PackedScene>("res://Square.tscn");
+		var squareScene = GD.Load<PackedScene>("res://scenes/Square.tscn");
 
 		for (int y = 0; y < 8; y++)
 		{

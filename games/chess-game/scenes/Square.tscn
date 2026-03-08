@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d1y0rx3o0ig1i"]
 
-[ext_resource type="Script" uid="uid://dy0ganr4uapsm" path="res://Square.cs" id="1_y4sij"]
+[ext_resource type="Script" uid="uid://dy0ganr4uapsm" path="res://scripts/Square.cs" id="1_2g2a8"]
 
 [node name="Square" type="Button" unique_id=724876190]
 custom_minimum_size = Vector2(80, 80)
@@ -9,4 +9,4 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_y4sij")
+script = ExtResource("1_2g2a8")
