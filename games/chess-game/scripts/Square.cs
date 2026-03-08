@@ -15,7 +15,8 @@ public partial class Square : Button
 	StyleBoxFlat normalStyle;
 	StyleBoxFlat hoverStyle;
 	StyleBoxFlat selectedStyle;
-	TextureRect highlight;
+	TextureRect moveHighlight;
+	TextureRect attackHighlight;
 
 	
 	// Called when the node enters the scene tree for the first time.
@@ -34,33 +35,20 @@ public partial class Square : Button
 
 		hoverStyle.BgColor = normalStyle.BgColor.Lightened(0.1f);
 
-		selectedStyle.BgColor = new Color("#6dbad1"); // yellow highlight
+		selectedStyle.BgColor = new Color("#6dbad1"); 
 
 		AddThemeStyleboxOverride("normal", normalStyle);
 		AddThemeStyleboxOverride("hover", hoverStyle);
 		AddThemeStyleboxOverride("pressed", normalStyle);
 		AddThemeStyleboxOverride("focus", normalStyle);
 
-		highlight = GetNode<TextureRect>("Highlight");
-		highlight.Visible = false;
-		highlight.Modulate = new Color(1, 1, 1, 0.5f); // half transparent
+		moveHighlight = GetNode<TextureRect>("MoveHighlight");
+		attackHighlight = GetNode<TextureRect>("AttackHighlight");
 
-		// make it stretch to fill the button (the square)
-		highlight.AnchorLeft = 0;
-		highlight.AnchorTop = 0;
-		highlight.AnchorRight = 1;
-		highlight.AnchorBottom = 1;
-
-		float marginX = 64 * 0.5f;
-		float marginY = 64 * 0.5f;
-
-		highlight.OffsetLeft = marginX;
-		highlight.OffsetTop = marginY;
-		highlight.OffsetRight = -marginX;
-		highlight.OffsetBottom = -marginY;
-
-		// scale the texture to fit perfectly
-		highlight.StretchMode = TextureRect.StretchModeEnum.Scale;
+		SetupHighlight(moveHighlight, 0.5f, 0.5f);
+		SetupHighlight(attackHighlight, 0.7f, 0.1f);
+		moveHighlight.Visible = false;
+		attackHighlight.Visible = false;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -114,9 +102,10 @@ public partial class Square : Button
 			AddThemeStyleboxOverride("normal", normalStyle);
 	}
 
-	public void SetHighlight(bool highlightOn)
+	public void SetHighlight(bool highlightOn, HighlightType type = HighlightType.Move)
 	{
-		highlight.Visible = highlightOn;
+		moveHighlight.Visible = highlightOn && type == HighlightType.Move;
+		attackHighlight.Visible = highlightOn && type == HighlightType.Attack;
 	}
 
 	public override void _GuiInput(InputEvent @event)
@@ -130,4 +119,31 @@ public partial class Square : Button
 		}
 	}
 	
+	private void SetupHighlight(TextureRect highlight, float alpha, float margin)
+	{
+		highlight.Modulate = new Color(1, 1, 1, alpha); // half transparent
+
+		// make it stretch to fill the button (the square)
+		highlight.AnchorLeft = 0;
+		highlight.AnchorTop = 0;
+		highlight.AnchorRight = 1;
+		highlight.AnchorBottom = 1;
+
+		float marginX = 64 * margin;
+		float marginY = 64 * margin;
+
+		highlight.OffsetLeft = marginX;
+		highlight.OffsetTop = marginY;
+		highlight.OffsetRight = -marginX;
+		highlight.OffsetBottom = -marginY;
+
+		// scale the texture to fit perfectly
+		highlight.StretchMode = TextureRect.StretchModeEnum.Scale;
+	}
+}
+
+public enum HighlightType
+{
+	Move,    // normal legal move
+	Attack   // square occupied by opponent
 }

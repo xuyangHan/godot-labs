@@ -42,26 +42,6 @@ public class Piece
 		}
 	}
 
-	private bool IsPathClear(int x1, int y1, int x2, int y2, Piece[,] board)
-	{
-		int dx = Math.Sign(x2 - x1);
-		int dy = Math.Sign(y2 - y1);
-
-		int x = x1 + dx;
-		int y = y1 + dy;
-
-		while (x != x2 || y != y2)
-		{
-			if (board[x, y] != null)
-				return false;
-
-			x += dx;
-			y += dy;
-		}
-
-		return true;
-	}
-
 	private List<(int,int)> GetKnightMoves(int x, int y, Piece[,] board)
 	{
 		int[] dx = { 1, 2, 2, 1, -1, -2, -2, -1 };

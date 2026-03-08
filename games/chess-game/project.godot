@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="ChessGame"
+run/main_scene="uid://l41k4m2kd4oq"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 config/icon="res://icon.svg"
 

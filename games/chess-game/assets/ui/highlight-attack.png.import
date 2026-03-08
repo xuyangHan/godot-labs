@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chdhfqm8vb7pp"
-path="res://.godot/imported/circle.png-56c8a136dc4ef80f0ed3434a9d801ecd.ctex"
+uid="uid://cir4oivfnxtyk"
+path="res://.godot/imported/highlight-attack.png-e6b72b8dadd5626311e6d6d78298025f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/circle.png"
-dest_files=["res://.godot/imported/circle.png-56c8a136dc4ef80f0ed3434a9d801ecd.ctex"]
+source_file="res://assets/ui/highlight-attack.png"
+dest_files=["res://.godot/imported/highlight-attack.png-e6b72b8dadd5626311e6d6d78298025f.ctex"]
 
 [params]
 

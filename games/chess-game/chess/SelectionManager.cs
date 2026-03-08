@@ -30,11 +30,30 @@ public class SelectionManager
         selectedSquare = square;
         square.SetSelected(true);
 
-        var moves = board.GetLegalMoves(board.GetPiece(square.X, square.Y), square.X, square.Y);
+        var piece = board.GetPiece(square.X, square.Y);
+        if (piece == null) return;
+
+        var moves = board.GetLegalMoves(piece, square.X, square.Y);
         foreach (var (x, y) in moves)
         {
             var sq = boardManager.GetSquare(x, y);
-            sq.SetHighlight(true);
+            var targetPiece = board.GetPiece(x, y);
+
+            if (targetPiece == null)
+            {
+                // empty square → normal highlight
+                sq.SetHighlight(true, HighlightType.Move); 
+            }
+            else if (targetPiece.Color != piece.Color)
+            {
+                // opponent piece → attack highlight
+                sq.SetHighlight(true, HighlightType.Attack);
+            }
+            else
+            {
+                // your own piece → maybe ignore or skip
+                continue;
+            }
             highlightedSquares.Add(sq);
         }
     }
