@@ -13,6 +13,8 @@ public partial class Main : Control
 	private AudioStreamPlayer moveSound;
 	private AudioStreamPlayer captureSound;
 
+	public PieceColor currentTurn = PieceColor.White;
+
 	public override void _Ready()
 	{
 		// Load square scene
@@ -54,7 +56,7 @@ public partial class Main : Control
 		// Nothing selected yet
 		if (!selectionManager.HasSelection())
 		{
-			if (clickedPiece != null)
+			if (clickedPiece != null && clickedPiece.Color == currentTurn)
 			{
 				selectionManager.SelectSquare(square, board);
 			}
@@ -90,6 +92,9 @@ public partial class Main : Control
 				captureSound.Play();
 				break;
 		}
+		currentTurn = currentTurn == PieceColor.White 
+		? PieceColor.Black 
+		: PieceColor.White;
 		
 		RefreshBoard();
 		selectionManager.ResetSelection();
