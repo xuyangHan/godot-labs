@@ -4,6 +4,7 @@ using System;
 public partial class Main : Control
 {
 	Piece[,] board = new Piece[8,8];
+	Square selectedSquare = null;
 
 	public override void _Ready()
 	{
@@ -20,6 +21,8 @@ public partial class Main : Control
 				Square square = squareScene.Instantiate<Square>();
 				square.X = x;
 				square.Y = y;
+
+				square.SquareClicked += OnSquareClicked;
 
 				boardUI.AddChild(square);
 				square.SetPiece(board[x,y]);
@@ -56,5 +59,41 @@ public partial class Main : Control
 		board[5,7] = new Piece(PieceType.Bishop, PieceColor.White);
 		board[6,7] = new Piece(PieceType.Knight, PieceColor.White);
 		board[7,7] = new Piece(PieceType.Rook, PieceColor.White);
+	}
+
+	void OnSquareClicked(Square square)
+	{
+		Piece clickedPiece = board[square.X, square.Y];
+
+		// Nothing selected yet
+		if (selectedSquare == null)
+		{
+			if (clickedPiece != null)
+			{
+				selectedSquare = square;
+				square.SetSelected(true);
+			}
+			return;
+		}
+
+		// Move piece
+		Piece movingPiece = board[selectedSquare.X, selectedSquare.Y];
+
+		board[square.X, square.Y] = movingPiece;
+		board[selectedSquare.X, selectedSquare.Y] = null;
+
+		selectedSquare.SetSelected(false);
+		
+		RefreshBoard();
+
+		selectedSquare = null;
+	}
+
+	void RefreshBoard()
+	{
+		foreach (Square square in GetNode<GridContainer>("Board").GetChildren())
+		{
+			square.SetPiece(board[square.X, square.Y]);
+		}
 	}
 }

@@ -1,32 +1,44 @@
 using Godot;
 using System;
 
+
 public partial class Square : Button
 {
 	public int X;
 	public int Y;
 	
 	Sprite2D pieceSprite;
+
+	[Signal]
+	public delegate void SquareClickedEventHandler(Square square);
+
+	StyleBoxFlat normalStyle;
+	StyleBoxFlat hoverStyle;
+	StyleBoxFlat selectedStyle;
+
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		pieceSprite = GetNode<Sprite2D>("PieceSprite");
 
-		var style = new StyleBoxFlat();
-		var hoverStyle = new StyleBoxFlat();
+		normalStyle = new StyleBoxFlat();
+		hoverStyle = new StyleBoxFlat();
+		selectedStyle = new StyleBoxFlat();
 
 		if ((X + Y) % 2 == 0)
-			style.BgColor = new Color("#ccdae0");
+			normalStyle.BgColor = new Color("#ccdae0");
 		else
-			style.BgColor = new Color("#7498ad");
+			normalStyle.BgColor = new Color("#7498ad");
 
-		hoverStyle.BgColor = style.BgColor.Lightened(0.1f);
+		hoverStyle.BgColor = normalStyle.BgColor.Lightened(0.1f);
 
-		AddThemeStyleboxOverride("normal", style);
+		selectedStyle.BgColor = new Color("#6dbad1"); // yellow highlight
+
+		AddThemeStyleboxOverride("normal", normalStyle);
 		AddThemeStyleboxOverride("hover", hoverStyle);
-		AddThemeStyleboxOverride("pressed", style);
-		AddThemeStyleboxOverride("focus", style);
+		AddThemeStyleboxOverride("pressed", normalStyle);
+		AddThemeStyleboxOverride("focus", normalStyle);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -35,6 +47,7 @@ public partial class Square : Button
 	public override void _Pressed()
 	{
 		GD.Print($"Clicked square {X},{Y}");
+		EmitSignal(SignalName.SquareClicked, this);
 	}
 	
 	public void SetPiece(Piece piece)
@@ -70,4 +83,13 @@ public partial class Square : Button
 		if (piece.Type == PieceType.King && piece.Color == PieceColor.Black)
 			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/black-king.png");
 	}
+
+	public void SetSelected(bool selected)
+	{
+		if (selected)
+			AddThemeStyleboxOverride("normal", selectedStyle);
+		else
+			AddThemeStyleboxOverride("normal", normalStyle);
+	}
+	
 }
