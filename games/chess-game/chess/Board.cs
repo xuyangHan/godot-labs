@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -53,12 +54,37 @@ public class Board
 		{
 			board[toX, toY] = movingPiece;
 			board[fromX, fromY] = null;
+			movingPiece.HasMoved = true;
 
 			return MoveResult.Capture;
 		}
 
+		if (movingPiece.Type == PieceType.King && Math.Abs(toX - fromX) == 2)
+		{
+			// Move king
+			board[toX, toY] = movingPiece;
+			board[fromX, fromY] = null;
+
+			// king side castle
+			if (toX > fromX)
+			{
+				board[5, fromY] = board[7, fromY];
+				board[7, fromY] = null;
+			}
+			// queen side castle
+			else
+			{
+				board[3, fromY] = board[0, fromY];
+				board[0, fromY] = null;
+			}
+
+			movingPiece.HasMoved = true;
+			return MoveResult.Castle;
+		}
+
 		// normal move
 		board[toX, toY] = movingPiece;
+		movingPiece.HasMoved = true;
 		board[fromX, fromY] = null;
 
 		return MoveResult.Normal;

@@ -86,9 +86,9 @@ public partial class Main : Control
 				captureSound.Play();
 				break;
 
-			// case MoveResult.Castle:
-			// 	castleSound.Play();
-			// 	break;
+			case MoveResult.Castle:
+				captureSound.Play();
+				break;
 		}
 		
 		RefreshBoard();

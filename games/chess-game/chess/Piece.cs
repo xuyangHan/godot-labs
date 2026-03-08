@@ -21,6 +21,7 @@ public class Piece
 {
 	public PieceType Type { get; set; }
 	public PieceColor Color { get; set; }
+	public bool HasMoved { get; set; } = false;
 
 	public Piece(PieceType type, PieceColor color)
 	{
@@ -110,6 +111,7 @@ public class Piece
 	{
 		var moves = new List<(int,int)>();
 
+		// normal king moves
 		for (int dx = -1; dx <= 1; dx++)
 		{
 			for (int dy = -1; dy <= 1; dy++)
@@ -130,7 +132,45 @@ public class Piece
 			}
 		}
 
+		// castling
+		if (!HasMoved)
+		{
+			// king side
+			if (CanCastleKingSide(x, y, board))
+				moves.Add((x + 2, y));
+
+			// queen side
+			if (CanCastleQueenSide(x, y, board))
+				moves.Add((x - 2, y));
+		}
+
 		return moves;
+	}
+
+	private bool CanCastleKingSide(int x, int y, Piece[,] board)
+	{
+		Piece rook = board[7, y];
+
+		if (rook == null || rook.Type != PieceType.Rook || rook.HasMoved)
+			return false;
+
+		if (board[5, y] != null || board[6, y] != null)
+			return false;
+
+		return true;
+	}
+
+	private bool CanCastleQueenSide(int x, int y, Piece[,] board)
+	{
+		Piece rook = board[0, y];
+
+		if (rook == null || rook.Type != PieceType.Rook || rook.HasMoved)
+			return false;
+
+		if (board[1, y] != null || board[2, y] != null || board[3, y] != null)
+			return false;
+
+		return true;
 	}
 
 	private List<(int,int)> GetBishopMoves(int x, int y, Piece[,] board)
