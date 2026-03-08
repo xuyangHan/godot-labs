@@ -1,0 +1,20 @@
+# Godot editor cache
+.godot/
+
+# Godot import cache
+.import/
+
+# C# / Mono
+.mono/
+bin/
+obj/
+
+# Android export
+/android/
+
+# User-specific files
+*.uid
+
+# OS junk
+.DS_Store
+Thumbs.db
