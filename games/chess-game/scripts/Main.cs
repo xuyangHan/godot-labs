@@ -105,7 +105,10 @@ public partial class Main : Control
 		if(moveResult == MoveResult.Promotion)
 		{
 			isWaitingForPromotion = true;
-			promotionPanel.ShowPromotionUI(square.X, square.Y, movingPiece.Color);
+
+			Vector2 pawnScreenPos = square.GlobalPosition;
+			promotionPanel.ShowPromotionUI(square.X, square.Y, pawnScreenPos, movingPiece.Color);
+			
 			// DO NOT swap currentTurn here! Return early.
 			RefreshBoard();
 			selectionManager.ResetSelection();

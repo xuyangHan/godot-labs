@@ -1,13 +1,28 @@
 [gd_scene format=3 uid="uid://chsv8d8w4trv2"]
 
 [ext_resource type="Script" uid="uid://bkq13hql6p2f" path="res://scripts/PromotionPanel.cs" id="1_l7he4"]
+[ext_resource type="Texture2D" uid="uid://dvpmie58fkeqi" path="res://assets/pieces/white-queen.png" id="2_1foj5"]
+[ext_resource type="Texture2D" uid="uid://cc0113ojpd755" path="res://assets/pieces/white-rook.png" id="3_74526"]
+[ext_resource type="Texture2D" uid="uid://bt417l451qdgp" path="res://assets/pieces/white-bishop.png" id="4_i6vs0"]
+[ext_resource type="Texture2D" uid="uid://gjx38q83vih1" path="res://assets/pieces/white-knight.png" id="5_cuu1c"]
 
 [node name="PromotionPanel" type="Control" unique_id=1212597934]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_l7he4")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1573610656]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.019607844, 0, 0, 0.627451)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=672544695]
 layout_mode = 0
@@ -15,20 +30,32 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="QueenButton" type="Button" parent="HBoxContainer" unique_id=865778088]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-text = "Queen"
+icon = ExtResource("2_1foj5")
+icon_alignment = 1
+expand_icon = true
 
 [node name="RookButton" type="Button" parent="HBoxContainer" unique_id=14151716]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-text = "Rook"
+icon = ExtResource("3_74526")
+icon_alignment = 1
+expand_icon = true
 
 [node name="BishopButton" type="Button" parent="HBoxContainer" unique_id=407189386]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-text = "Bishop"
+icon = ExtResource("4_i6vs0")
+icon_alignment = 1
+expand_icon = true
 
 [node name="KnightButton" type="Button" parent="HBoxContainer" unique_id=820851226]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-text = "Knight"
+icon = ExtResource("5_cuu1c")
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="HBoxContainer/QueenButton" to="." method="OnQueenPressed"]
 [connection signal="pressed" from="HBoxContainer/RookButton" to="." method="OnRookPressed"]

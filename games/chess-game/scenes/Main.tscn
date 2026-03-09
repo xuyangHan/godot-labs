@@ -14,6 +14,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_elqb8")
 
+[node name="PromotionPanel" parent="." unique_id=1212597934 instance=ExtResource("4_rarhs")]
+visible = false
+top_level = true
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
+
 [node name="Board" type="GridContainer" parent="." unique_id=1334904552]
 custom_minimum_size = Vector2(640, 640)
 layout_mode = 1
@@ -37,7 +47,3 @@ stream = ExtResource("2_rvslj")
 
 [node name="CaptureSound" type="AudioStreamPlayer" parent="." unique_id=507332864]
 stream = ExtResource("3_0bbpv")
-
-[node name="PromotionPanel" parent="." unique_id=1212597934 instance=ExtResource("4_rarhs")]
-visible = false
-layout_mode = 0
