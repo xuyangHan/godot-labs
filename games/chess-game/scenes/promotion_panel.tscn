@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cc0113ojpd755" path="res://assets/pieces/white-rook.png" id="3_74526"]
 [ext_resource type="Texture2D" uid="uid://bt417l451qdgp" path="res://assets/pieces/white-bishop.png" id="4_i6vs0"]
 [ext_resource type="Texture2D" uid="uid://gjx38q83vih1" path="res://assets/pieces/white-knight.png" id="5_cuu1c"]
+[ext_resource type="Texture2D" uid="uid://bf16n4p215lfo" path="res://assets/pieces/white-cat.png" id="6_74526"]
 
 [node name="PromotionPanel" type="Control" unique_id=1212597934]
 layout_mode = 3
@@ -57,7 +58,15 @@ icon = ExtResource("5_cuu1c")
 icon_alignment = 1
 expand_icon = true
 
+[node name="CatButton" type="Button" parent="HBoxContainer" unique_id=1974999351]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon = ExtResource("6_74526")
+icon_alignment = 1
+expand_icon = true
+
 [connection signal="pressed" from="HBoxContainer/QueenButton" to="." method="OnQueenPressed"]
 [connection signal="pressed" from="HBoxContainer/RookButton" to="." method="OnRookPressed"]
 [connection signal="pressed" from="HBoxContainer/BishopButton" to="." method="OnBishopPressed"]
 [connection signal="pressed" from="HBoxContainer/KnightButton" to="." method="OnKnightPressed"]
+[connection signal="pressed" from="HBoxContainer/CatButton" to="." method="OnCatPressed"]

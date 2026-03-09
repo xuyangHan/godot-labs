@@ -106,4 +106,28 @@ public class Board
 
     public Piece GetPiece(int x, int y) => board[x, y];
     
+	public void ConvertNearbyPieces(int centerX, int centerY, PieceColor playerColor)
+	{
+		// Check all squares around the cat (8 directions)
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				int targetX = centerX + dx;
+				int targetY = centerY + dy;
+
+				// Ensure we are within board bounds
+				if (targetX >= 0 && targetX < 8 && targetY >= 0 && targetY < 8)
+				{
+					Piece piece = GetPiece(targetX, targetY);
+					// If there's an enemy piece, switch its color
+					if (piece != null && piece.Color != playerColor && piece.Type != PieceType.King)
+					{
+						piece.Color = playerColor;
+						GD.Print($"Cat magic! Converted piece at {targetX}, {targetY}");
+					}
+				}
+			}
+		}
+	}
 }

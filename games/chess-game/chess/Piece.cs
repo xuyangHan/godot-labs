@@ -8,7 +8,8 @@ public enum PieceType
 	Knight,
 	Bishop,
 	Queen,
-	King
+	King,
+	Cat
 }
 
 public enum PieceColor

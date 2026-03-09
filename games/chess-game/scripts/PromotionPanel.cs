@@ -76,4 +76,10 @@ public partial class PromotionPanel : Control
 		EmitSignal(SignalName.PromotionSelected, "Knight");
 		HideUI();
 	}
+
+	public void OnCatPressed()
+	{
+		EmitSignal(SignalName.PromotionSelected, "Cat");
+		HideUI();
+	}
 }

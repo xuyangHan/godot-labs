@@ -140,6 +140,12 @@ public partial class Main : Control
 
 		board.board[x, y] = new Piece(type, color);
 
+		if (typeStr == "Cat")
+		{
+			// 1. Perform the "Cat" special effect
+			board.ConvertNearbyPieces(x, y, color); 
+		}
+
 		currentTurn = currentTurn == PieceColor.White 
 		? PieceColor.Black 
 		: PieceColor.White;

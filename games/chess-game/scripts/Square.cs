@@ -79,6 +79,11 @@ public partial class Square : Button
 			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/white-queen.png");
 		if (piece.Type == PieceType.King && piece.Color == PieceColor.White)
 			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/white-king.png");
+		if (piece.Type == PieceType.Cat && piece.Color == PieceColor.White)
+		{
+			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/white-cat.png");
+			pieceSprite.Scale = new Vector2(0.25f, 0.25f);
+		}
 
 		if (piece.Type == PieceType.Pawn && piece.Color == PieceColor.Black)
 			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/black-pawn.png");
@@ -92,6 +97,11 @@ public partial class Square : Button
 			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/black-queen.png");
 		if (piece.Type == PieceType.King && piece.Color == PieceColor.Black)
 			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/black-king.png");
+		if (piece.Type == PieceType.Cat && piece.Color == PieceColor.Black)
+		{	
+			pieceSprite.Texture = GD.Load<Texture2D>("res://assets/pieces/black-cat.png");
+			pieceSprite.Scale = new Vector2(0.25f, 0.25f);
+		}
 	}
 
 	public void SetSelected(bool selected)
