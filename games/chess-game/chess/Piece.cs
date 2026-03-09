@@ -281,5 +281,6 @@ public enum MoveResult
 	Normal,
 	Capture,
 	Castle,
-	Illegal
+	Illegal,
+	Promotion
 }

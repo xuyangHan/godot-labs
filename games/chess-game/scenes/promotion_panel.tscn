@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://chsv8d8w4trv2"]
+
+[ext_resource type="Script" uid="uid://bkq13hql6p2f" path="res://scripts/PromotionPanel.cs" id="1_l7he4"]
+
+[node name="PromotionPanel" type="Control" unique_id=1212597934]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_l7he4")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=672544695]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="QueenButton" type="Button" parent="HBoxContainer" unique_id=865778088]
+layout_mode = 2
+text = "Queen"
+
+[node name="RookButton" type="Button" parent="HBoxContainer" unique_id=14151716]
+layout_mode = 2
+text = "Rook"
+
+[node name="BishopButton" type="Button" parent="HBoxContainer" unique_id=407189386]
+layout_mode = 2
+text = "Bishop"
+
+[node name="KnightButton" type="Button" parent="HBoxContainer" unique_id=820851226]
+layout_mode = 2
+text = "Knight"
+
+[connection signal="pressed" from="HBoxContainer/QueenButton" to="." method="OnQueenPressed"]
+[connection signal="pressed" from="HBoxContainer/RookButton" to="." method="OnRookPressed"]
+[connection signal="pressed" from="HBoxContainer/BishopButton" to="." method="OnBishopPressed"]
+[connection signal="pressed" from="HBoxContainer/KnightButton" to="." method="OnKnightPressed"]

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://b5g1se1dfd7l8" path="res://scripts/Main.cs" id="1_elqb8"]
 [ext_resource type="AudioStream" uid="uid://nsykkmnt2uw8" path="res://assets/sounds/move.wav" id="2_rvslj"]
 [ext_resource type="AudioStream" uid="uid://ctq3pf70d0xuj" path="res://assets/sounds/castle.wav" id="3_0bbpv"]
+[ext_resource type="PackedScene" uid="uid://chsv8d8w4trv2" path="res://scenes/promotion_panel.tscn" id="4_rarhs"]
 
 [node name="Main" type="Control" unique_id=1827929679]
 layout_mode = 3
@@ -36,3 +37,7 @@ stream = ExtResource("2_rvslj")
 
 [node name="CaptureSound" type="AudioStreamPlayer" parent="." unique_id=507332864]
 stream = ExtResource("3_0bbpv")
+
+[node name="PromotionPanel" parent="." unique_id=1212597934 instance=ExtResource("4_rarhs")]
+visible = false
+layout_mode = 0

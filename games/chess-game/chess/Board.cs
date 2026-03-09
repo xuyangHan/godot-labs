@@ -49,6 +49,19 @@ public class Board
 		if (movingPiece == null)
 			return MoveResult.Illegal;
 
+		// Pawn promotion
+		if (movingPiece.Type == PieceType.Pawn)
+		{
+			if ((movingPiece.Color == PieceColor.White && toY == 0) ||
+				(movingPiece.Color == PieceColor.Black && toY == 7))
+			{
+				board[toX, toY] = movingPiece;
+				movingPiece.HasMoved = true;
+				board[fromX, fromY] = null;
+				return MoveResult.Promotion;
+			}
+		}
+
 		// capture
 		if (targetPiece != null)
 		{
@@ -59,6 +72,7 @@ public class Board
 			return MoveResult.Capture;
 		}
 
+		// castle
 		if (movingPiece.Type == PieceType.King && Math.Abs(toX - fromX) == 2)
 		{
 			// Move king

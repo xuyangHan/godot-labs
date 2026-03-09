@@ -15,6 +15,9 @@ public partial class Main : Control
 
 	public PieceColor currentTurn = PieceColor.White;
 
+	private PromotionPanel promotionPanel;
+	private bool isWaitingForPromotion = false;
+
 	public override void _Ready()
 	{
 		// Load square scene
@@ -39,12 +42,17 @@ public partial class Main : Control
 		moveSound = GetNode<AudioStreamPlayer>("MoveSound");
 		captureSound = GetNode<AudioStreamPlayer>("CaptureSound");
 
+		promotionPanel = GetNode<PromotionPanel>("PromotionPanel");
+		promotionPanel.PromotionSelected += OnPromotionSelected;
+
 		// Refresh initial board
 		RefreshBoard();
 	}
 
 	void OnSquareClicked(Square square, string button)
 	{
+		if (isWaitingForPromotion) return;
+
 		if (button == "right")
 		{
 			selectionManager.ResetSelection();
@@ -85,19 +93,57 @@ public partial class Main : Control
 				break;
 
 			case MoveResult.Capture:
-				captureSound.Play();
-				break;
-
 			case MoveResult.Castle:
 				captureSound.Play();
 				break;
+
+			case MoveResult.Promotion:
+				captureSound.Play();
+				break;
 		}
+
+		if(moveResult == MoveResult.Promotion)
+		{
+			isWaitingForPromotion = true;
+			promotionPanel.ShowPromotionUI(square.X, square.Y, movingPiece.Color);
+			// DO NOT swap currentTurn here! Return early.
+			RefreshBoard();
+			selectionManager.ResetSelection();
+			return; 
+		}
+
 		currentTurn = currentTurn == PieceColor.White 
 		? PieceColor.Black 
 		: PieceColor.White;
 		
 		RefreshBoard();
 		selectionManager.ResetSelection();
+	}
+	
+	private void OnPromotionSelected(string typeStr)
+	{
+		if (!Enum.TryParse(typeStr, out PieceType type))
+		{
+			GD.PrintErr($"Failed to parse PieceType: {typeStr}");
+			return;
+		}
+
+		// Use the data stored in PromotionPanel
+		int x = promotionPanel.promotionX;
+		int y = promotionPanel.promotionY;
+		PieceColor color = promotionPanel.promotionColor;
+		
+		GD.Print($"Promoting piece at {x},{y} to {type}");
+
+		board.board[x, y] = new Piece(type, color);
+
+		currentTurn = currentTurn == PieceColor.White 
+		? PieceColor.Black 
+		: PieceColor.White;
+		
+		isWaitingForPromotion = false;
+		promotionPanel.HideUI();
+		RefreshBoard();
 	}
 
 	void RefreshBoard()
