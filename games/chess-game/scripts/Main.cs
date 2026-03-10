@@ -20,6 +20,10 @@ public partial class Main : Control
 	private MoveEntry pendingPromotionMove = null;
 	private HistoryManager historyManager;
 
+	private Control gameOverPanel;
+	private Label gameOverLabel;
+	private bool isGameOver = false;
+
 	public override void _Ready()
 	{
 		// Load square scene
@@ -49,13 +53,16 @@ public partial class Main : Control
 
 		historyManager = GetNode<HistoryManager>("HistoryManager");
 
+		gameOverPanel = GetNode<Control>("GameOverPanel");
+		gameOverLabel = GetNode<Label>("GameOverPanel/GameOverLabel");
+
 		// Refresh initial board
 		RefreshBoard();
 	}
 
 	void OnSquareClicked(Square square, string button)
 	{
-		if (isWaitingForPromotion) return;
+		if (isWaitingForPromotion || isGameOver) return;
 
 		if (button == "right")
 		{
@@ -170,6 +177,7 @@ public partial class Main : Control
 		
 		isWaitingForPromotion = false;
 		promotionPanel.HideUI();
+		CheckGameOver();
 		RefreshBoard();
 	}
 
@@ -207,13 +215,18 @@ public partial class Main : Control
 		if (board.IsCheckmate(currentTurn))
 		{
 			string winner = currentTurn == PieceColor.White ? "Black" : "White";
-			GD.Print($"Checkmate! {winner} wins.");
-			// TODO: show overlay, lock input, etc.
+			ShowGameOver($"Checkmate!\n{winner} wins.");
 		}
 		else if (board.IsStalemate(currentTurn))
 		{
-			GD.Print("Stalemate! It's a draw.");
-			// TODO: show overlay
+			ShowGameOver("Stalemate!\nIt's a draw.");
 		}
+	}
+
+	void ShowGameOver(string message)
+	{
+		isGameOver = true;
+		gameOverLabel.Text = message;
+		gameOverPanel.Visible = true;
 	}
 }
