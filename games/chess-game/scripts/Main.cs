@@ -176,6 +176,27 @@ public partial class Main : Control
 		foreach (Square square in GetNode<GridContainer>("Board").GetChildren())
 		{
 			square.SetPiece(board.GetPiece(square.X, square.Y));
+
+			square.SetCheckHighlight(false);
+		}
+
+		HighlightCheckedKing();
+	}
+
+	void HighlightCheckedKing()
+	{
+		if (board.IsKingInCheck(currentTurn))
+		{
+			var (kx, ky) = board.FindKing(currentTurn);
+
+			foreach (Square square in GetNode<GridContainer>("Board").GetChildren())
+			{
+				if (square.X == kx && square.Y == ky)
+				{
+					square.SetCheckHighlight(true);
+					break;
+				}
+			}
 		}
 	}
 }

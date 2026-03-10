@@ -210,4 +210,70 @@ public class Board
 			}
 		}
 	}
+
+	public bool MoveLeavesKingInCheck(int fx, int fy, int tx, int ty, PieceColor color)
+	{
+		Piece movingPiece = board[fx, fy];
+		Piece captured = board[tx, ty];
+
+		// simulate move
+		board[tx, ty] = movingPiece;
+		board[fx, fy] = null;
+
+		bool inCheck = IsKingInCheck(color);
+
+		// undo move
+		board[fx, fy] = movingPiece;
+		board[tx, ty] = captured;
+
+		return inCheck;
+	}
+
+	public bool IsKingInCheck(PieceColor color)
+	{
+		(int kx, int ky) = FindKing(color);
+
+		PieceColor enemy = color == PieceColor.White
+			? PieceColor.Black
+			: PieceColor.White;
+
+		for (int x = 0; x < 8; x++)
+		{
+			for (int y = 0; y < 8; y++)
+			{
+				Piece p = board[x, y];
+
+				if (p != null && p.Color == enemy)
+				{
+					var moves = p.GetPseudoMoves(x, y, this);
+
+					foreach (var m in moves)
+					{
+						if (m.x == kx && m.y == ky)
+							return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public (int,int) FindKing(PieceColor color)
+	{
+		for (int x = 0; x < 8; x++)
+		{
+			for (int y = 0; y < 8; y++)
+			{
+				if (board[x,y] != null &&
+					board[x,y].Type == PieceType.King &&
+					board[x,y].Color == color)
+				{
+					return (x,y);
+				}
+			}
+		}
+
+		return (-1,-1);
+	}
 }

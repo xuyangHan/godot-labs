@@ -17,6 +17,7 @@ public partial class Square : Button
 	StyleBoxFlat selectedStyle;
 	TextureRect moveHighlight;
 	TextureRect attackHighlight;
+	TextureRect checkHighlight;
 
 	
 	// Called when the node enters the scene tree for the first time.
@@ -44,11 +45,14 @@ public partial class Square : Button
 
 		moveHighlight = GetNode<TextureRect>("MoveHighlight");
 		attackHighlight = GetNode<TextureRect>("AttackHighlight");
+		checkHighlight = GetNode<TextureRect>("CheckHighlight");
 
 		SetupHighlight(moveHighlight, 0.5f, 0.5f);
 		SetupHighlight(attackHighlight, 0.7f, 0.1f);
+		SetupHighlight(checkHighlight, 0.5f, 0.05f);
 		moveHighlight.Visible = false;
 		attackHighlight.Visible = false;
+		checkHighlight.Visible = false;
 
 		AddCoordinateLabel();
 	}
@@ -117,6 +121,11 @@ public partial class Square : Button
 	{
 		moveHighlight.Visible = highlightOn && type == HighlightType.Move;
 		attackHighlight.Visible = highlightOn && type == HighlightType.Attack;
+	}
+
+	public void SetCheckHighlight(bool active)
+	{
+		checkHighlight.Visible = active;
 	}
 
 	public override void _GuiInput(InputEvent @event)

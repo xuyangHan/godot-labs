@@ -32,6 +32,22 @@ public class Piece
 
 	public List<(int x, int y)> GetLegalMoves(int fromX, int fromY, Board board)
 	{
+		var pseudoMoves = GetPseudoMoves(fromX, fromY, board);
+		var legalMoves = new List<(int,int)>();
+
+		foreach (var move in pseudoMoves)
+		{
+			if (!board.MoveLeavesKingInCheck(fromX, fromY, move.x, move.y, Color))
+			{
+				legalMoves.Add(move);
+			}
+		}
+
+		return legalMoves;
+	}
+
+	public List<(int x, int y)> GetPseudoMoves(int fromX, int fromY, Board board)
+	{
 		switch (Type)
 		{
 			case PieceType.Pawn: return GetPawnMoves(fromX, fromY, board);

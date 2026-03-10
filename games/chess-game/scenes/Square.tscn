@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dy0ganr4uapsm" path="res://scripts/Square.cs" id="1_2g2a8"]
 [ext_resource type="Texture2D" uid="uid://chdhfqm8vb7pp" path="res://assets/ui/highlight-circle.png" id="2_lhkbq"]
 [ext_resource type="Texture2D" uid="uid://cir4oivfnxtyk" path="res://assets/ui/highlight-attack.png" id="3_04lg0"]
+[ext_resource type="Texture2D" uid="uid://bpr3jv4ljbn54" path="res://assets/ui/highlight-check.png" id="4_c5lvi"]
 
 [node name="Square" type="Button" unique_id=724876190]
 custom_minimum_size = Vector2(80, 80)
@@ -37,3 +38,11 @@ stretch_mode = 3
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="CheckHighlight" type="TextureRect" parent="." unique_id=262334823]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("4_c5lvi")
+expand_mode = 1
+stretch_mode = 3
