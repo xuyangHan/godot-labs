@@ -3,42 +3,57 @@ using System.Collections.Generic;
 
 public partial class HistoryManager : Node
 {
-	// Define a signal for when a player clicks a move to explore
 	[Signal] public delegate void RequestBoardStateEventHandler(int moveIndex);
 
 	private List<MoveEntry> _history = new List<MoveEntry>();
+	private List<Label> _moveLabels = new List<Label>();
 	private int _currentIndex = -1;
 
 	[Export] public GridContainer moveListGrid;
 
+	public int CurrentIndex => _currentIndex;
+
 	public override void _Ready()
 	{
-		moveListGrid = GetNode<GridContainer>("MoveListGrid");
+		// moveListGrid is assigned in the editor via the [Export] property
 	}
+
+	public MoveEntry GetEntry(int index) => _history[index];
+
+	public void SetCurrentIndex(int index) => _currentIndex = index;
+
+	public bool CanUndo() => _currentIndex >= 0;
+	public bool CanRedo() => _currentIndex < _history.Count - 1;
 
 	public void RecordMove(MoveEntry move)
 	{
-		// 1. Handle Branching (Delete future moves if we were in the past)
+		// Truncate any future moves when branching from a past position
 		if (_currentIndex < _history.Count - 1)
 		{
-			int removeCount = _history.Count - (_currentIndex + 1);
-			_history.RemoveRange(_currentIndex + 1, removeCount);
-			
-			// Remove the corresponding children from the GridContainer
-			for (int i = 0; i < removeCount; i++)
+			int removeFrom = _currentIndex + 1;
+			int removeCount = _history.Count - removeFrom;
+
+			// Each white move added 2 grid children (turn label + notation),
+			// each black move added 1. Count correctly before removing.
+			int cellsToRemove = 0;
+			for (int i = removeFrom; i < _history.Count; i++)
+				cellsToRemove += _history[i].PieceMoved.Color == PieceColor.White ? 2 : 1;
+
+			for (int i = 0; i < cellsToRemove; i++)
 			{
 				var lastChild = moveListGrid.GetChild(moveListGrid.GetChildCount() - 1);
+				moveListGrid.RemoveChild(lastChild);
 				lastChild.QueueFree();
 			}
+
+			_history.RemoveRange(removeFrom, removeCount);
+			_moveLabels.RemoveRange(removeFrom, removeCount);
 		}
 
-		// 2. Add to Memory
 		_history.Add(move);
 		_currentIndex++;
 
-		// 3. UI Update: Add to GridContainer
-		// Determine turn and color
-		bool isWhite = (move.PieceMoved.Color == PieceColor.White);
+		bool isWhite = move.PieceMoved.Color == PieceColor.White;
 		int turnNumber = (_history.Count + 1) / 2;
 
 		if (isWhite)
@@ -49,22 +64,41 @@ public partial class HistoryManager : Node
 
 		var moveLabel = new Label { Text = move.Notation };
 		moveLabel.MouseFilter = Control.MouseFilterEnum.Stop;
-		
-		// Add click behavior
 		moveLabel.GuiInput += (ev) => {
 			if (ev is InputEventMouseButton mb && mb.Pressed)
 				EmitSignal(SignalName.RequestBoardState, _history.IndexOf(move));
 		};
 
 		moveListGrid.AddChild(moveLabel);
+		_moveLabels.Add(moveLabel);
+
+		HighlightActiveMove(_currentIndex);
 	}
 
-	public MoveEntry Undo()
+	public void HighlightActiveMove(int index)
 	{
-		if (!CanUndo()) return null;
-		return _history[_currentIndex--];
+		for (int i = 0; i < _moveLabels.Count; i++)
+		{
+			if (i == index)
+				_moveLabels[i].AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.1f));
+			else
+				_moveLabels[i].RemoveThemeColorOverride("font_color");
+		}
 	}
 
-	public bool CanUndo() => _currentIndex >= 0;
-	public bool CanRedo() => _currentIndex < _history.Count - 1;
+	public void Clear()
+	{
+		_history.Clear();
+		_moveLabels.Clear();
+		_currentIndex = -1;
+
+		// Remove all grid children except the 3 header labels (Turn / White / Black)
+		int childCount = moveListGrid.GetChildCount();
+		for (int i = childCount - 1; i >= 3; i--)
+		{
+			var child = moveListGrid.GetChild(i);
+			moveListGrid.RemoveChild(child);
+			child.QueueFree();
+		}
+	}
 }

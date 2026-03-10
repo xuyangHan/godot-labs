@@ -24,6 +24,8 @@ public partial class Main : Control
 	private Label gameOverLabel;
 	private bool isGameOver = false;
 
+	private BoardSnapshot initialSnapshot;
+
 	public override void _Ready()
 	{
 		// Load square scene
@@ -52,9 +54,21 @@ public partial class Main : Control
 		promotionPanel.PromotionSelected += OnPromotionSelected;
 
 		historyManager = GetNode<HistoryManager>("HistoryManager");
+		historyManager.RequestBoardState += OnJumpToMove;
 
 		gameOverPanel = GetNode<Control>("GameOverPanel");
 		gameOverLabel = GetNode<Label>("GameOverPanel/GameOverLabel");
+
+		initialSnapshot = board.TakeSnapshot(PieceColor.White);
+
+		// Wire navigation & new game buttons
+		GetNode<Button>("ButtonsPanel/PrevButton").Pressed += () => {
+			if (historyManager.CanUndo()) JumpToMove(historyManager.CurrentIndex - 1);
+		};
+		GetNode<Button>("ButtonsPanel/NextButton").Pressed += () => {
+			if (historyManager.CanRedo()) JumpToMove(historyManager.CurrentIndex + 1);
+		};
+		GetNode<Button>("ButtonsPanel/NewGameButton").Pressed += ResetGame;
 
 		// Refresh initial board
 		RefreshBoard();
@@ -128,11 +142,11 @@ public partial class Main : Control
 			return; 
 		}
 
+		var nextTurn = currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+		moveEntry.SnapshotAfter = board.TakeSnapshot(nextTurn);
 		historyManager.RecordMove(moveEntry);
 
-		currentTurn = currentTurn == PieceColor.White 
-		? PieceColor.Black 
-		: PieceColor.White;
+		currentTurn = nextTurn;
 
 		CheckGameOver();
 		
@@ -155,25 +169,24 @@ public partial class Main : Control
 		
 		board.board[x, y] = new Piece(type, color);
 
+		// Cat conversion must happen before the snapshot so the converted pieces are captured
+		if (typeStr == "Cat")
+			board.ConvertNearbyPieces(x, y, color);
+
+		var nextTurn = currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+
 		if (pendingPromotionMove != null)
 		{
 			GD.Print($"Promoting piece at {x},{y} to {type}");
 
 			pendingPromotionMove.Notation += "=" + typeStr.Substring(0,1).ToUpper();
+			pendingPromotionMove.SnapshotAfter = board.TakeSnapshot(nextTurn);
 			historyManager.RecordMove(pendingPromotionMove);
 			GD.Print(pendingPromotionMove.Notation);
 			pendingPromotionMove = null;
 		}
 
-		if (typeStr == "Cat")
-		{
-			// 1. Perform the "Cat" special effect
-			board.ConvertNearbyPieces(x, y, color); 
-		}
-
-		currentTurn = currentTurn == PieceColor.White 
-		? PieceColor.Black 
-		: PieceColor.White;
+		currentTurn = nextTurn;
 		
 		isWaitingForPromotion = false;
 		promotionPanel.HideUI();
@@ -228,5 +241,58 @@ public partial class Main : Control
 		isGameOver = true;
 		gameOverLabel.Text = message;
 		gameOverPanel.Visible = true;
+	}
+
+	// ── New game ─────────────────────────────────────────────────────────
+
+	void ResetGame()
+	{
+		board.RestoreSnapshot(initialSnapshot);
+		currentTurn = PieceColor.White;
+		isGameOver = false;
+		isWaitingForPromotion = false;
+		pendingPromotionMove = null;
+		gameOverPanel.Visible = false;
+		promotionPanel.HideUI();
+		historyManager.Clear();
+		selectionManager.ResetSelection();
+		RefreshBoard();
+	}
+
+	// ── History navigation ────────────────────────────────────────────────
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is not InputEventKey key || !key.Pressed || key.Echo) return;
+
+		if (key.Keycode == Key.Left && historyManager.CanUndo())
+			JumpToMove(historyManager.CurrentIndex - 1);
+		else if (key.Keycode == Key.Right && historyManager.CanRedo())
+			JumpToMove(historyManager.CurrentIndex + 1);
+	}
+
+	void OnJumpToMove(int index) => JumpToMove(index);
+
+	void JumpToMove(int index)
+	{
+		BoardSnapshot snapshot = index < 0
+			? initialSnapshot
+			: historyManager.GetEntry(index).SnapshotAfter;
+
+		board.RestoreSnapshot(snapshot);
+		currentTurn = snapshot.Turn;
+
+		historyManager.SetCurrentIndex(index);
+		historyManager.HighlightActiveMove(index);
+
+		// Clear any game-over or promotion state when navigating
+		isGameOver = false;
+		isWaitingForPromotion = false;
+		pendingPromotionMove = null;
+		gameOverPanel.Visible = false;
+		promotionPanel.HideUI();
+
+		selectionManager.ResetSelection();
+		RefreshBoard();
 	}
 }

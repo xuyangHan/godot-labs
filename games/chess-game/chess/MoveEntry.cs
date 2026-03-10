@@ -8,7 +8,8 @@ public class MoveEntry
     public Piece PieceMoved;
     public Piece PieceCaptured; // Important for Undoing!
     public bool IsPromotion;
-    
+    public BoardSnapshot SnapshotAfter;
+
     // For the future Tree structure
     public List<MoveEntry> Variations = new List<MoveEntry>();
 }

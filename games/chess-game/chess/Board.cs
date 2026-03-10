@@ -259,6 +259,28 @@ public class Board
 		return false;
 	}
 
+	public BoardSnapshot TakeSnapshot(PieceColor turn)
+	{
+		var copy = new Piece[8, 8];
+		for (int x = 0; x < 8; x++)
+			for (int y = 0; y < 8; y++)
+				if (board[x, y] != null)
+					copy[x, y] = new Piece(board[x, y].Type, board[x, y].Color)
+						{ HasMoved = board[x, y].HasMoved };
+		return new BoardSnapshot(copy, EnPassantTarget, turn);
+	}
+
+	public void RestoreSnapshot(BoardSnapshot snapshot)
+	{
+		for (int x = 0; x < 8; x++)
+			for (int y = 0; y < 8; y++)
+				board[x, y] = snapshot.Board[x, y] != null
+					? new Piece(snapshot.Board[x, y].Type, snapshot.Board[x, y].Color)
+						{ HasMoved = snapshot.Board[x, y].HasMoved }
+					: null;
+		EnPassantTarget = snapshot.EnPassantTarget;
+	}
+
 	public (int,int) FindKing(PieceColor color)
 	{
 		for (int x = 0; x < 8; x++)
