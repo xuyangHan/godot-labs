@@ -5,6 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://ctq3pf70d0xuj" path="res://assets/sounds/castle.wav" id="3_0bbpv"]
 [ext_resource type="PackedScene" uid="uid://chsv8d8w4trv2" path="res://scenes/promotion_panel.tscn" id="4_rarhs"]
 [ext_resource type="Script" uid="uid://d20ppdhsf4pt6" path="res://chess/HistoryManager.cs" id="5_vcsgt"]
+[ext_resource type="Texture2D" uid="uid://cvg77e7xayl2w" path="res://assets/ui/Background.jpg" id="6_c01mt"]
 
 [sub_resource type="Theme" id="Theme_vcsgt"]
 
@@ -16,6 +17,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_elqb8")
+
+[node name="Background" type="TextureRect" parent="." unique_id=880565689]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_c01mt")
+expand_mode = 1
 
 [node name="Layout" type="MarginContainer" parent="." unique_id=958729867]
 layout_mode = 1
@@ -34,6 +45,10 @@ theme_override_constants/margin_bottom = 12
 [node name="HBox" type="HBoxContainer" parent="Layout" unique_id=1085925817]
 layout_mode = 2
 theme_override_constants/separation = 16
+
+[node name="LeftSpacer" type="Control" parent="Layout/HBox" unique_id=1234815535]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
 
 [node name="Board" type="GridContainer" parent="Layout/HBox" unique_id=1334904552]
 custom_minimum_size = Vector2(640, 640)
@@ -106,7 +121,6 @@ stream = ExtResource("3_0bbpv")
 
 [node name="HistoryManager" type="Node" parent="." unique_id=1278423756]
 script = ExtResource("5_vcsgt")
-move_list_grid = NodePath("../Layout/HBox/RightPanel/MoveListScroll/MoveListGrid")
 
 [node name="GameOverPanel" type="Panel" parent="." unique_id=1814237920]
 visible = false

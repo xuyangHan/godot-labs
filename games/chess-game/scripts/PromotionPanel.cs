@@ -36,11 +36,16 @@ public partial class PromotionPanel : Control
 		
 		// 2. Position ONLY the buttons near the pawn
 		float yOffset = (color == PieceColor.White) ? 80f : -50f;
-		
-		// Centering logic: subtract half the width of the container 
-		// so it's centered horizontally over the square
-		Vector2 centerOffset = new Vector2(buttonContainer.Size.X / 2, 0);
-		buttonContainer.GlobalPosition = screenPos + new Vector2(0, yOffset) - centerOffset;
+
+		// Start centered horizontally over the square
+		Vector2 desiredPos = screenPos + new Vector2(-buttonContainer.Size.X / 2, yOffset);
+
+		// Clamp so the container never goes outside the viewport
+		Vector2 viewportSize = GetViewportRect().Size;
+		float clampedX = Mathf.Clamp(desiredPos.X, 0, viewportSize.X - buttonContainer.Size.X);
+		float clampedY = Mathf.Clamp(desiredPos.Y, 0, viewportSize.Y - buttonContainer.Size.Y);
+
+		buttonContainer.GlobalPosition = new Vector2(clampedX, clampedY);
 
 		Visible = true;
 		backgroundOverlay.Visible = true;
