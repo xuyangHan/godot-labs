@@ -79,7 +79,7 @@ public partial class Main : Control
 		var selected = selectionManager.GetSelectedSquare();
 		Piece movingPiece = board.GetPiece(selected.X, selected.Y);
 
-		var legalMoves = movingPiece.GetLegalMoves(selected.X, selected.Y, board.board);
+		var legalMoves = movingPiece.GetLegalMoves(selected.X, selected.Y, board);
 		bool isLegal = legalMoves.Contains((square.X, square.Y));
 
 		if (!isLegal)

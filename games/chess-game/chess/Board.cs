@@ -5,6 +5,7 @@ using Godot;
 public class Board
 {
     public Piece[,] board = new Piece[8,8];
+	public (int x, int y)? EnPassantTarget = null;
 
     public void SetupBoard() {
 		// Black pieces
@@ -38,7 +39,7 @@ public class Board
 
     public List<(int x, int y)> GetLegalMoves(Piece piece, int x, int y)
     {
-        return piece.GetLegalMoves(x, y, board);
+        return piece.GetLegalMoves(x, y, this);
     }
 
     public (MoveResult Result, MoveEntry Entry) MovePiece(int fromX, int fromY, int toX, int toY)
@@ -48,6 +49,9 @@ public class Board
 
 		if (movingPiece == null)
 			return (MoveResult.Illegal, null);
+
+		var previousEnPassant = EnPassantTarget;
+    	EnPassantTarget = null;
 		
 		// Create the history entry data
 		MoveEntry entry = new MoveEntry {
@@ -58,9 +62,31 @@ public class Board
 			Notation = GetNotation(fromX, fromY, toX, toY, movingPiece, targetPiece != null)
 		};
 
-		// Pawn promotion
+		
 		if (movingPiece.Type == PieceType.Pawn)
 		{
+			// EN PASSANT CAPTURE
+			if (previousEnPassant != null &&
+				toX == previousEnPassant.Value.x &&
+				toY == previousEnPassant.Value.y)
+			{
+				int captureY = movingPiece.Color == PieceColor.White ? toY + 1 : toY - 1;
+
+				Piece capturedPawn = board[toX, captureY];
+				entry.PieceCaptured = capturedPawn;
+
+				board[toX, captureY] = null;
+
+				board[toX, toY] = movingPiece;
+				board[fromX, fromY] = null;
+
+				movingPiece.HasMoved = true;
+				entry.Notation = GetNotation(fromX, fromY, toX, toY, movingPiece, true);
+
+				return (MoveResult.Capture, entry);
+			}
+
+			// Pawn promotion
 			if ((movingPiece.Color == PieceColor.White && toY == 0) ||
 				(movingPiece.Color == PieceColor.Black && toY == 7))
 			{
@@ -68,6 +94,13 @@ public class Board
 				movingPiece.HasMoved = true;
 				board[fromX, fromY] = null;
 				return (MoveResult.Promotion, entry);
+			}
+
+			// Set en passant target after double step
+			if (Math.Abs(toY - fromY) == 2)
+			{
+				int direction = movingPiece.Color == PieceColor.White ? -1 : 1;
+				EnPassantTarget = (fromX, fromY + direction);
 			}
 		}
 

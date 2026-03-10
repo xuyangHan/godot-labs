@@ -30,16 +30,16 @@ public class Piece
 		Color = color;
 	}
 
-	public List<(int x, int y)> GetLegalMoves(int fromX, int fromY, Piece[,] board)
+	public List<(int x, int y)> GetLegalMoves(int fromX, int fromY, Board board)
 	{
 		switch (Type)
 		{
 			case PieceType.Pawn: return GetPawnMoves(fromX, fromY, board);
-			case PieceType.Knight: return GetKnightMoves(fromX, fromY, board);
-			case PieceType.Bishop: return GetBishopMoves(fromX, fromY, board);
-			case PieceType.Rook: return GetRookMoves(fromX, fromY, board);
-			case PieceType.Queen: return GetQueenMoves(fromX, fromY, board);
-			case PieceType.King: return GetKingMoves(fromX, fromY, board);
+			case PieceType.Knight: return GetKnightMoves(fromX, fromY, board.board);
+			case PieceType.Bishop: return GetBishopMoves(fromX, fromY, board.board);
+			case PieceType.Rook: return GetRookMoves(fromX, fromY, board.board);
+			case PieceType.Queen: return GetQueenMoves(fromX, fromY, board.board);
+			case PieceType.King: return GetKingMoves(fromX, fromY, board.board);
 			default: return new List<(int,int)>();
 		}
 	}
@@ -67,7 +67,7 @@ public class Piece
 		return moves;
 	}
 
-	private List<(int,int)> GetPawnMoves(int x, int y, Piece[,] board)
+	private List<(int,int)> GetPawnMoves(int x, int y, Board board)
 	{
 		var moves = new List<(int,int)>();
 
@@ -77,13 +77,13 @@ public class Piece
 		int forward = y + direction;
 
 		// Move one square forward (must be empty)
-		if (forward >= 0 && forward < 8 && board[x, forward] == null)
+		if (forward >= 0 && forward < 8 && board.board[x, forward] == null)
 		{
 			moves.Add((x, forward));
 
 			// Move two squares from starting position (both empty)
 			int twoForward = y + direction * 2;
-			if (y == startRow && twoForward >= 0 && twoForward < 8 && board[x, twoForward] == null)
+			if (y == startRow && twoForward >= 0 && twoForward < 8 && board.board[x, twoForward] == null)
 			{
 				moves.Add((x, twoForward));
 			}
@@ -98,7 +98,16 @@ public class Piece
 
 			if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8)
 			{
-				if (board[nx, ny] != null && board[nx, ny].Color != Color)
+				// normal capture
+				if (board.board[nx, ny] != null && board.board[nx, ny].Color != Color)
+				{
+					moves.Add((nx, ny));
+				}
+
+				// en passant
+				if (board.EnPassantTarget != null &&
+					board.EnPassantTarget.Value.x == nx &&
+					board.EnPassantTarget.Value.y == ny)
 				{
 					moves.Add((nx, ny));
 				}
