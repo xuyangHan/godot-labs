@@ -41,13 +41,22 @@ public class Board
         return piece.GetLegalMoves(x, y, board);
     }
 
-    public MoveResult MovePiece(int fromX, int fromY, int toX, int toY)
+    public (MoveResult Result, MoveEntry Entry) MovePiece(int fromX, int fromY, int toX, int toY)
     {
 		Piece movingPiece = board[fromX, fromY];
 		Piece targetPiece = board[toX, toY];
 
 		if (movingPiece == null)
-			return MoveResult.Illegal;
+			return (MoveResult.Illegal, null);
+		
+		// Create the history entry data
+		MoveEntry entry = new MoveEntry {
+			FromX = fromX, FromY = fromY,
+			ToX = toX, ToY = toY,
+			PieceMoved = movingPiece,
+			PieceCaptured = targetPiece, // Save this for UNDO later!
+			Notation = GetNotation(fromX, fromY, toX, toY, movingPiece, targetPiece != null)
+		};
 
 		// Pawn promotion
 		if (movingPiece.Type == PieceType.Pawn)
@@ -58,7 +67,7 @@ public class Board
 				board[toX, toY] = movingPiece;
 				movingPiece.HasMoved = true;
 				board[fromX, fromY] = null;
-				return MoveResult.Promotion;
+				return (MoveResult.Promotion, entry);
 			}
 		}
 
@@ -69,7 +78,7 @@ public class Board
 			board[fromX, fromY] = null;
 			movingPiece.HasMoved = true;
 
-			return MoveResult.Capture;
+			return (MoveResult.Capture, entry);
 		}
 
 		// castle
@@ -93,7 +102,7 @@ public class Board
 			}
 
 			movingPiece.HasMoved = true;
-			return MoveResult.Castle;
+			return (MoveResult.Castle, entry);
 		}
 
 		// normal move
@@ -101,11 +110,49 @@ public class Board
 		movingPiece.HasMoved = true;
 		board[fromX, fromY] = null;
 
-		return MoveResult.Normal;
+		return (MoveResult.Normal, entry);
     }
 
     public Piece GetPiece(int x, int y) => board[x, y];
     
+
+	private string GetNotation(int fx, int fy, int tx, int ty, Piece p, bool isCapture, string promotionType = "")
+	{
+		string[] files = { "a","b","c","d","e","f","g","h" };
+		string[] ranks = { "8","7","6","5","4","3","2","1" };
+
+		// Castling
+		if (p.Type == PieceType.King && Math.Abs(tx - fx) == 2)
+			return tx > fx ? "O-O" : "O-O-O";
+
+		string piecePrefix = "";
+
+		switch (p.Type)
+		{
+			case PieceType.Knight: piecePrefix = "N"; break;
+			case PieceType.Bishop: piecePrefix = "B"; break;
+			case PieceType.Rook:   piecePrefix = "R"; break;
+			case PieceType.Queen:  piecePrefix = "Q"; break;
+			case PieceType.King:   piecePrefix = "K"; break;
+		}
+
+		// Pawn capture needs source file
+		if (p.Type == PieceType.Pawn && isCapture)
+			piecePrefix = files[fx];
+
+		string moveStr = piecePrefix;
+
+		if (isCapture)
+			moveStr += "x";
+
+		moveStr += files[tx] + ranks[ty];
+
+		if (!string.IsNullOrEmpty(promotionType))
+			moveStr += "=" + promotionType.Substring(0,1).ToUpper();
+
+		return moveStr;
+	}
+
 	public void ConvertNearbyPieces(int centerX, int centerY, PieceColor playerColor)
 	{
 		// Check all squares around the cat (8 directions)

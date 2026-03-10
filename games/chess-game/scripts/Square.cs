@@ -56,7 +56,6 @@ public partial class Square : Button
 
 	public override void _Pressed()
 	{
-		GD.Print($"Clicked square {X},{Y}");
 		EmitSignal(SignalName.SquareClicked, this);
 	}
 	

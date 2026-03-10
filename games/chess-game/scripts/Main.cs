@@ -17,6 +17,8 @@ public partial class Main : Control
 
 	private PromotionPanel promotionPanel;
 	private bool isWaitingForPromotion = false;
+	private MoveEntry pendingPromotionMove = null;
+	private HistoryManager historyManager;
 
 	public override void _Ready()
 	{
@@ -44,6 +46,8 @@ public partial class Main : Control
 
 		promotionPanel = GetNode<PromotionPanel>("PromotionPanel");
 		promotionPanel.PromotionSelected += OnPromotionSelected;
+
+		historyManager = GetNode<HistoryManager>("HistoryManager");
 
 		// Refresh initial board
 		RefreshBoard();
@@ -85,7 +89,8 @@ public partial class Main : Control
 			return;
 		}
 
-		var moveResult = board.MovePiece(selected.X, selected.Y, square.X, square.Y);
+		var (moveResult, moveEntry) = board.MovePiece(selected.X, selected.Y, square.X, square.Y);
+		
 		switch (moveResult)
 		{
 			case MoveResult.Normal:
@@ -104,6 +109,7 @@ public partial class Main : Control
 
 		if(moveResult == MoveResult.Promotion)
 		{
+			pendingPromotionMove = moveEntry;
 			isWaitingForPromotion = true;
 
 			Vector2 pawnScreenPos = square.GlobalPosition;
@@ -114,6 +120,8 @@ public partial class Main : Control
 			selectionManager.ResetSelection();
 			return; 
 		}
+
+		historyManager.RecordMove(moveEntry);
 
 		currentTurn = currentTurn == PieceColor.White 
 		? PieceColor.Black 
@@ -136,9 +144,17 @@ public partial class Main : Control
 		int y = promotionPanel.promotionY;
 		PieceColor color = promotionPanel.promotionColor;
 		
-		GD.Print($"Promoting piece at {x},{y} to {type}");
-
 		board.board[x, y] = new Piece(type, color);
+
+		if (pendingPromotionMove != null)
+		{
+			GD.Print($"Promoting piece at {x},{y} to {type}");
+
+			pendingPromotionMove.Notation += "=" + typeStr.Substring(0,1).ToUpper();
+			historyManager.RecordMove(pendingPromotionMove);
+			GD.Print(pendingPromotionMove.Notation);
+			pendingPromotionMove = null;
+		}
 
 		if (typeStr == "Cat")
 		{
