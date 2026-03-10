@@ -101,6 +101,12 @@ public partial class Main : Control
 		var selected = selectionManager.GetSelectedSquare();
 		Piece movingPiece = board.GetPiece(selected.X, selected.Y);
 
+		if (movingPiece == null)
+		{
+			selectionManager.ResetSelection();
+			return;
+		}
+
 		var legalMoves = movingPiece.GetLegalMoves(selected.X, selected.Y, board);
 		bool isLegal = legalMoves.Contains((square.X, square.Y));
 

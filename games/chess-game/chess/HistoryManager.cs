@@ -79,6 +79,8 @@ public partial class HistoryManager : Node
 	{
 		for (int i = 0; i < _moveLabels.Count; i++)
 		{
+			if (!GodotObject.IsInstanceValid(_moveLabels[i])) continue;
+
 			if (i == index)
 				_moveLabels[i].AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.1f));
 			else
