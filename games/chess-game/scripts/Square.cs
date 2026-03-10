@@ -49,6 +49,8 @@ public partial class Square : Button
 		SetupHighlight(attackHighlight, 0.7f, 0.1f);
 		moveHighlight.Visible = false;
 		attackHighlight.Visible = false;
+
+		AddCoordinateLabel();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -148,6 +150,38 @@ public partial class Square : Button
 
 		// scale the texture to fit perfectly
 		highlight.StretchMode = TextureRect.StretchModeEnum.Scale;
+	}
+
+	private void AddCoordinateLabel()
+	{
+		string[] files = { "a","b","c","d","e","f","g","h" };
+		string[] ranks = { "8","7","6","5","4","3","2","1" };
+
+		// bottom row → show file letter
+		if (Y == 7)
+		{
+			Label fileLabel = new Label();
+			fileLabel.Text = files[X];
+
+			fileLabel.Position = new Vector2(68, 60); // bottom-right corner
+			fileLabel.Modulate = new Color(0.2f,0.2f,0.2f);
+			fileLabel.MouseFilter = MouseFilterEnum.Ignore;
+
+			AddChild(fileLabel);
+		}
+
+		// left column → show rank number
+		if (X == 0)
+		{
+			Label rankLabel = new Label();
+			rankLabel.Text = ranks[Y];
+
+			rankLabel.Position = new Vector2(2, 2); // top-left corner
+			rankLabel.Modulate = new Color(0.2f,0.2f,0.2f);
+			rankLabel.MouseFilter = MouseFilterEnum.Ignore;
+
+			AddChild(rankLabel);
+		}
 	}
 }
 
