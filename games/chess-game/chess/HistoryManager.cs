@@ -15,7 +15,7 @@ public partial class HistoryManager : Node
 
 	public override void _Ready()
 	{
-		// moveListGrid is assigned in the editor via the [Export] property
+		moveListGrid = GetParent().GetNode<GridContainer>("Layout/HBox/RightPanel/MoveListScroll/MoveListGrid");
 	}
 
 	public MoveEntry GetEntry(int index) => _history[index];

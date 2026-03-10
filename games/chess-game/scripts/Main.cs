@@ -25,6 +25,7 @@ public partial class Main : Control
 	private bool isGameOver = false;
 
 	private BoardSnapshot initialSnapshot;
+	private GridContainer boardGrid;
 
 	public override void _Ready()
 	{
@@ -35,14 +36,14 @@ public partial class Main : Control
 		board.SetupBoard();
 
 		// Initialize board UI
-		var boardUI = GetNode<GridContainer>("Board");
-		boardManager.Init(boardUI, squareScene);
+		boardGrid = GetNode<GridContainer>("Layout/HBox/Board");
+		boardManager.Init(boardGrid, squareScene);
 
 		// Initialize selection manager
 		selectionManager = new SelectionManager(boardManager);
 
 		// Wire clicks
-		foreach (Square sq in GetNode<GridContainer>("Board").GetChildren())
+		foreach (Square sq in boardGrid.GetChildren())
 		{
 			sq.SquareClicked += (s, button) => OnSquareClicked((Square)s, (string)button);
 		}
@@ -62,13 +63,13 @@ public partial class Main : Control
 		initialSnapshot = board.TakeSnapshot(PieceColor.White);
 
 		// Wire navigation & new game buttons
-		GetNode<Button>("ButtonsPanel/PrevButton").Pressed += () => {
+		GetNode<Button>("Layout/HBox/RightPanel/ButtonsPanel/PrevButton").Pressed += () => {
 			if (historyManager.CanUndo()) JumpToMove(historyManager.CurrentIndex - 1);
 		};
-		GetNode<Button>("ButtonsPanel/NextButton").Pressed += () => {
+		GetNode<Button>("Layout/HBox/RightPanel/ButtonsPanel/NextButton").Pressed += () => {
 			if (historyManager.CanRedo()) JumpToMove(historyManager.CurrentIndex + 1);
 		};
-		GetNode<Button>("ButtonsPanel/NewGameButton").Pressed += ResetGame;
+		GetNode<Button>("Layout/HBox/RightPanel/ButtonsPanel/NewGameButton").Pressed += ResetGame;
 
 		// Refresh initial board
 		RefreshBoard();
@@ -196,7 +197,7 @@ public partial class Main : Control
 
 	void RefreshBoard()
 	{
-		foreach (Square square in GetNode<GridContainer>("Board").GetChildren())
+		foreach (Square square in boardGrid.GetChildren())
 		{
 			square.SetPiece(board.GetPiece(square.X, square.Y));
 
@@ -212,7 +213,7 @@ public partial class Main : Control
 		{
 			var (kx, ky) = board.FindKing(currentTurn);
 
-			foreach (Square square in GetNode<GridContainer>("Board").GetChildren())
+			foreach (Square square in boardGrid.GetChildren())
 			{
 				if (square.X == kx && square.Y == ky)
 				{

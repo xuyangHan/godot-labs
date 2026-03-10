@@ -17,6 +17,77 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_elqb8")
 
+[node name="Layout" type="MarginContainer" parent="." unique_id=958729867]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="HBox" type="HBoxContainer" parent="Layout" unique_id=1085925817]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Board" type="GridContainer" parent="Layout/HBox" unique_id=1334904552]
+custom_minimum_size = Vector2(640, 640)
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 8
+
+[node name="RightPanel" type="VBoxContainer" parent="Layout/HBox" unique_id=1766919210]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="MoveListScroll" type="ScrollContainer" parent="Layout/HBox/RightPanel" unique_id=1548424350]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MoveListGrid" type="GridContainer" parent="Layout/HBox/RightPanel/MoveListScroll" unique_id=1091772289]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_vcsgt")
+columns = 3
+
+[node name="Turn" type="Label" parent="Layout/HBox/RightPanel/MoveListScroll/MoveListGrid" unique_id=153776493]
+layout_mode = 2
+text = "Turn"
+
+[node name="White" type="Label" parent="Layout/HBox/RightPanel/MoveListScroll/MoveListGrid" unique_id=66181912]
+layout_mode = 2
+text = "White"
+
+[node name="Black" type="Label" parent="Layout/HBox/RightPanel/MoveListScroll/MoveListGrid" unique_id=215788143]
+layout_mode = 2
+text = "Black"
+
+[node name="ButtonsPanel" type="HBoxContainer" parent="Layout/HBox/RightPanel" unique_id=1731563156]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+alignment = 1
+
+[node name="NewGameButton" type="Button" parent="Layout/HBox/RightPanel/ButtonsPanel" unique_id=742765303]
+layout_mode = 2
+text = "New Game"
+
+[node name="PrevButton" type="Button" parent="Layout/HBox/RightPanel/ButtonsPanel" unique_id=967582318]
+layout_mode = 2
+text = "◀"
+
+[node name="NextButton" type="Button" parent="Layout/HBox/RightPanel/ButtonsPanel" unique_id=998438993]
+layout_mode = 2
+text = "▶"
+
 [node name="PromotionPanel" parent="." unique_id=1212597934 instance=ExtResource("4_rarhs")]
 visible = false
 top_level = true
@@ -27,19 +98,6 @@ anchor_bottom = 0.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="Board" type="GridContainer" parent="." unique_id=1334904552]
-custom_minimum_size = Vector2(640, 640)
-layout_mode = 1
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/h_separation = 0
-theme_override_constants/v_separation = 0
-columns = 8
-
 [node name="MoveSound" type="AudioStreamPlayer" parent="." unique_id=924188630]
 stream = ExtResource("2_rvslj")
 
@@ -48,29 +106,7 @@ stream = ExtResource("3_0bbpv")
 
 [node name="HistoryManager" type="Node" parent="." unique_id=1278423756]
 script = ExtResource("5_vcsgt")
-
-[node name="MoveListGrid" type="GridContainer" parent="HistoryManager" unique_id=1091772289]
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -92.0
-grow_horizontal = 0
-grow_vertical = 2
-theme = SubResource("Theme_vcsgt")
-columns = 3
-
-[node name="Turn" type="Label" parent="HistoryManager/MoveListGrid" unique_id=153776493]
-layout_mode = 2
-text = "Turn"
-
-[node name="White" type="Label" parent="HistoryManager/MoveListGrid" unique_id=66181912]
-layout_mode = 2
-text = "White"
-
-[node name="Black" type="Label" parent="HistoryManager/MoveListGrid" unique_id=215788143]
-layout_mode = 2
-text = "Black"
+move_list_grid = NodePath("../Layout/HBox/RightPanel/MoveListScroll/MoveListGrid")
 
 [node name="GameOverPanel" type="Panel" parent="." unique_id=1814237920]
 visible = false
@@ -97,22 +133,3 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="ButtonsPanel" type="HBoxContainer" parent="." unique_id=1731563156]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-alignment = 1
-
-[node name="NewGameButton" type="Button" parent="ButtonsPanel" unique_id=742765303]
-layout_mode = 2
-text = "New Game"
-
-[node name="PrevButton" type="Button" parent="ButtonsPanel" unique_id=967582318]
-layout_mode = 2
-text = "◀"
-
-[node name="NextButton" type="Button" parent="ButtonsPanel" unique_id=998438993]
-layout_mode = 2
-text = "▶"
