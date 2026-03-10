@@ -276,4 +276,22 @@ public class Board
 
 		return (-1,-1);
 	}
+
+	public bool HasAnyLegalMove(PieceColor color)
+	{
+		for (int x = 0; x < 8; x++)
+			for (int y = 0; y < 8; y++)
+			{
+				Piece p = board[x, y];
+				if (p != null && p.Color == color && p.GetLegalMoves(x, y, this).Count > 0)
+					return true;
+			}
+		return false;
+	}
+	
+	public bool IsCheckmate(PieceColor color) =>
+		IsKingInCheck(color) && !HasAnyLegalMove(color);
+	
+	public bool IsStalemate(PieceColor color) =>
+		!IsKingInCheck(color) && !HasAnyLegalMove(color);
 }

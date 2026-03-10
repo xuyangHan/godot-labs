@@ -126,6 +126,8 @@ public partial class Main : Control
 		currentTurn = currentTurn == PieceColor.White 
 		? PieceColor.Black 
 		: PieceColor.White;
+
+		CheckGameOver();
 		
 		RefreshBoard();
 		selectionManager.ResetSelection();
@@ -197,6 +199,21 @@ public partial class Main : Control
 					break;
 				}
 			}
+		}
+	}
+
+	void CheckGameOver()
+	{
+		if (board.IsCheckmate(currentTurn))
+		{
+			string winner = currentTurn == PieceColor.White ? "Black" : "White";
+			GD.Print($"Checkmate! {winner} wins.");
+			// TODO: show overlay, lock input, etc.
+		}
+		else if (board.IsStalemate(currentTurn))
+		{
+			GD.Print("Stalemate! It's a draw.");
+			// TODO: show overlay
 		}
 	}
 }
