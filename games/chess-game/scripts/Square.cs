@@ -65,8 +65,12 @@ public partial class Square : Button
 		EmitSignal(SignalName.SquareClicked, this);
 	}
 	
+	private static readonly Vector2 DefaultPieceScale = new Vector2(0.625f, 0.625f);
+
 	public void SetPiece(Piece piece)
 	{
+		pieceSprite.Scale = DefaultPieceScale;
+
 		if (piece == null)
 		{
 			pieceSprite.Texture = null;
