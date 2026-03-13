@@ -18,3 +18,6 @@ obj/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Stockfish
+stockfish.exe

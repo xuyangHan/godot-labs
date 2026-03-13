@@ -27,6 +27,8 @@ public partial class Main : Control
 	private BoardSnapshot initialSnapshot;
 	private GridContainer boardGrid;
 
+	private ChessAI ai = new ChessAI();
+
 	public override void _Ready()
 	{
 		// Load square scene
@@ -70,6 +72,9 @@ public partial class Main : Control
 			if (historyManager.CanRedo()) JumpToMove(historyManager.CurrentIndex + 1);
 		};
 		GetNode<Button>("Layout/HBox/RightPanel/ButtonsPanel/NewGameButton").Pressed += ResetGame;
+
+		ai.Start();
+		ai.OnBestMoveReceived = (line) => CallDeferred(nameof(OnStockfishResponse), line);
 
 		// Refresh initial board
 		RefreshBoard();
@@ -159,6 +164,11 @@ public partial class Main : Control
 		
 		RefreshBoard();
 		selectionManager.ResetSelection();
+
+		GD.Print(currentTurn);
+		string fen = board.ToFEN(currentTurn);
+		ai.SendCommand("position fen " + fen);
+		ai.SendCommand("go depth 10");
 	}
 	
 	private void OnPromotionSelected(string typeStr)
@@ -197,6 +207,61 @@ public partial class Main : Control
 		
 		isWaitingForPromotion = false;
 		promotionPanel.HideUI();
+		CheckGameOver();
+		RefreshBoard();
+
+		// After human promotion, tell Stockfish the new position so the AI can move
+		string fen = board.ToFEN(currentTurn);
+		ai.SendCommand("position fen " + fen);
+		ai.SendCommand("go depth 10");
+	}
+
+	void OnStockfishResponse(string line)
+	{
+		if (!line.StartsWith("bestmove"))
+			return;
+
+		string bestMove = line.Split(' ')[1];
+		if (bestMove == "(none)") return;
+
+		// UCI: ranks 1–8 with 1 at bottom (White). Board: y=0 is rank 8 (top), y=7 is rank 1 (bottom).
+		int fromX = bestMove[0] - 'a';
+		int fromY = 7 - (bestMove[1] - '1');
+		int toX   = bestMove[2] - 'a';
+		int toY   = 7 - (bestMove[3] - '1');
+
+		// Promotion piece: UCI uses 5th char for promotion e.g. "c2c1q" or "e7e8q"
+		PieceType? promotionPiece = null;
+		if (bestMove.Length >= 5)
+		{
+			promotionPiece = bestMove[4] switch
+			{
+				'q' => PieceType.Queen,
+				'r' => PieceType.Rook,
+				'b' => PieceType.Bishop,
+				'n' => PieceType.Knight,
+				_ => (PieceType?)null
+			};
+			if (promotionPiece == null) promotionPiece = PieceType.Queen;
+		}
+
+		var (moveResult, moveEntry) = board.MovePiece(fromX, fromY, toX, toY);
+		if (moveEntry == null) return;
+
+		// If AI promoted, replace the pawn with the chosen piece
+		if (moveResult == MoveResult.Promotion && moveEntry.PieceMoved != null)
+		{
+			PieceType promoteTo = promotionPiece ?? PieceType.Queen;
+			board.board[toX, toY] = new Piece(promoteTo, moveEntry.PieceMoved.Color);
+			char promoChar = promoteTo switch { PieceType.Knight => 'N', _ => promoteTo.ToString()[0] };
+			moveEntry.Notation += "=" + char.ToUpper(promoChar);
+		}
+
+		var nextTurn = currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+		moveEntry.SnapshotAfter = board.TakeSnapshot(nextTurn);
+		historyManager.RecordMove(moveEntry);
+
+		currentTurn = nextTurn;
 		CheckGameOver();
 		RefreshBoard();
 	}

@@ -316,4 +316,83 @@ public class Board
 	
 	public bool IsStalemate(PieceColor color) =>
 		!IsKingInCheck(color) && !HasAnyLegalMove(color);
+
+	public string ToFEN(PieceColor sideToMove)
+	{
+		var fen = new System.Text.StringBuilder();
+
+		// FEN: first row = rank 8 (board y=0), last row = rank 1 (board y=7)
+		for (int y = 0; y < 8; y++)
+		{
+			int emptyCount = 0;
+
+			for (int x = 0; x < 8; x++)
+			{
+				Piece piece = board[x, y];
+
+				if (piece == null)
+				{
+					emptyCount++;
+					continue;
+				}
+
+				if (emptyCount > 0)
+				{
+					fen.Append(emptyCount);
+					emptyCount = 0;
+				}
+
+				fen.Append(PieceToFEN(piece));
+			}
+
+			if (emptyCount > 0)
+				fen.Append(emptyCount);
+
+			if (y < 7)
+				fen.Append('/');
+		}
+
+		// side to move
+		fen.Append(sideToMove == PieceColor.White ? " w " : " b ");
+
+		// castling rights (skip for now)
+		fen.Append("- ");
+
+		// en passant square
+		if (EnPassantTarget.HasValue)
+		{
+			var (x, y) = EnPassantTarget.Value;
+			// Board y=0 is rank 8, y=7 is rank 1 → algebraic rank = 8 - y
+			fen.Append($"{(char)('a' + x)}{8 - y} ");
+		}
+		else
+		{
+			fen.Append("- ");
+		}
+
+		// halfmove + move number
+		fen.Append("0 1");
+
+		return fen.ToString();
+	}
+
+	private char PieceToFEN(Piece piece)
+	{
+		char symbol = piece.Type switch
+		{
+			PieceType.Pawn => 'p',
+			PieceType.Knight => 'n',
+			PieceType.Bishop => 'b',
+			PieceType.Rook => 'r',
+			PieceType.Queen => 'q',
+			PieceType.King => 'k',
+			_ => '?'
+		};
+
+		if (piece.Color == PieceColor.White)
+			symbol = char.ToUpper(symbol);
+
+		return symbol;
+	}
+
 }
