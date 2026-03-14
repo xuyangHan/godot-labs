@@ -103,9 +103,24 @@ Possible integrations later:
 
 ## Blog Series
 
-Alongside development, I will write a series of technical articles about **game system design**.
+Alongside development, I write a series of technical articles about **game system design**. Drafts for the fundamentals phase use the **chess game** as the teaching project.
 
-Topics may include:
+### Posts
+
+1. **[Introduction to Godot](blogs/01-introduction-to-godot.md)** – Project setup, scenes, nodes, `_Ready()`, `GetNode`, and how the main script ties everything together.
+
+2. **[From game logic to the screen](blogs/02-logic-to-screen-signals-scenes-input.md)** – Separating Board/Piece from UI, PackedScene/Instantiate, signals, input (`_GuiInput`), and optional threading (`CallDeferred`).
+
+### Series arc
+
+- **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (these two posts). Optional later: animation, audio, saving, C# vs GDScript.
+- **Phase 2 (In practice):** By game type – turn-based (e.g. Pokémon-style), then action/real-time, then multiplayer (e.g. MOBA).
+
+The chess project illustrates turn-based state, move history, and clear separation of rules vs view, which will be referenced in the turn-based in-practice post.
+
+---
+
+Topics for future posts may include:
 
 * Designing a turn-based combat system
 * Architecture of farming simulations
