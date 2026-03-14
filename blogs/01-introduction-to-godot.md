@@ -263,6 +263,10 @@ In our case, the `Main` script’s `_Ready()` method will:
 
 If everything is wired correctly, the board should appear automatically when the game starts.
 
+![Chess board screenshot](../assets/chess-board.png)
+
+*Screenshot: The chess board is generated at runtime by instantiating a single Square scene 64 times.*
+
 ---
 
 ### A simple experiment
