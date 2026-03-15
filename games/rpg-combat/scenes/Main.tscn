@@ -1,0 +1,178 @@
+[gd_scene load_steps=16 format=3 uid="uid://c2b4x8qm4n1wp"]
+
+[ext_resource type="Script" uid="uid://bofl5h0wrie1h" path="res://scripts/Main.cs" id="1_main"]
+[ext_resource type="Texture2D" path="res://assets/UI/panelInset_beige.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/UI/panel_brown.png" id="3_panel_brown"]
+[ext_resource type="Texture2D" path="res://assets/UI/panel_beige.png" id="4_panel_beige"]
+[ext_resource type="Texture2D" path="res://assets/UI/barBack_horizontalMid.png" id="5_bar_back"]
+[ext_resource type="Texture2D" path="res://assets/UI/barRed_horizontalMid.png" id="6_bar_red"]
+[ext_resource type="Texture2D" path="res://assets/UI/barGreen_horizontalMid.png" id="7_bar_green"]
+[ext_resource type="Texture2D" path="res://assets/UI/barBlue_horizontalLeft.png" id="8_bar_blue"]
+[ext_resource type="Texture2D" path="res://assets/UI/buttonLong_brown.png" id="9_btn_normal"]
+[ext_resource type="Texture2D" path="res://assets/UI/buttonLong_brown_pressed.png" id="10_btn_pressed"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_enemy"]
+texture = ExtResource("3_panel_brown")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_player"]
+texture = ExtResource("4_panel_beige")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_menu"]
+texture = ExtResource("3_panel_brown")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_normal"]
+texture = ExtResource("9_btn_normal")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
+texture = ExtResource("10_btn_pressed")
+
+[node name="Main" type="Control" unique_id=1872786344]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=485961228]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=358324017]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="EnemyPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=484486704]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_enemy")
+
+[node name="EnemyVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/EnemyPanel" unique_id=1123948528]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EnemyName" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel/EnemyVBox" unique_id=1498700170]
+layout_mode = 2
+text = "Enemy"
+
+[node name="EnemyHPLabel" type="Label" parent="MarginContainer/VBoxContainer/EnemyPanel/EnemyVBox" unique_id=1442228181]
+layout_mode = 2
+text = "HP: 80 / 80"
+
+[node name="EnemyHPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/EnemyPanel/EnemyVBox" unique_id=253831723]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+texture_under = ExtResource("5_bar_back")
+texture_progress = ExtResource("6_bar_red")
+fill_mode = 0
+max_value = 80.0
+value = 80.0
+show_percentage = false
+
+[node name="BattleArea" type="Control" parent="MarginContainer/VBoxContainer" unique_id=602763561]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="EnemySprite" type="TextureRect" parent="MarginContainer/VBoxContainer/BattleArea" unique_id=2101890662]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayerPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=300018985]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_player")
+
+[node name="PlayerVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PlayerPanel" unique_id=1334134588]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlayerName" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel/PlayerVBox" unique_id=56799859]
+layout_mode = 2
+text = "Player"
+
+[node name="PlayerHPLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel/PlayerVBox" unique_id=1989135641]
+layout_mode = 2
+text = "HP: 100 / 100"
+
+[node name="PlayerHPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/PlayerPanel/PlayerVBox" unique_id=718769919]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+texture_under = ExtResource("5_bar_back")
+texture_progress = ExtResource("7_bar_green")
+fill_mode = 0
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="PlayerMPLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayerPanel/PlayerVBox" unique_id=1545572451]
+layout_mode = 2
+text = "MP: 20 / 20"
+
+[node name="PlayerMPBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/PlayerPanel/PlayerVBox" unique_id=569761133]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+texture_under = ExtResource("5_bar_back")
+texture_progress = ExtResource("8_bar_blue")
+fill_mode = 0
+max_value = 20.0
+value = 20.0
+show_percentage = false
+
+[node name="ActionMenuPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=729186817]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_menu")
+
+[node name="ActionButtons" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ActionMenuPanel" unique_id=1140788064]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AttackButton" type="Button" parent="MarginContainer/VBoxContainer/ActionMenuPanel/ActionButtons" unique_id=914306829]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
+text = "Attack"
+
+[node name="SkillButton" type="Button" parent="MarginContainer/VBoxContainer/ActionMenuPanel/ActionButtons" unique_id=1200741386]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
+text = "Skill"
+
+[node name="DefendButton" type="Button" parent="MarginContainer/VBoxContainer/ActionMenuPanel/ActionButtons" unique_id=112812383]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
+text = "Defend"
+
+[node name="ItemButton" type="Button" parent="MarginContainer/VBoxContainer/ActionMenuPanel/ActionButtons" unique_id=1465373880]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
+text = "Item"
