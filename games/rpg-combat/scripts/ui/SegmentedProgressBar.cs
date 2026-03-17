@@ -48,8 +48,9 @@ public partial class SegmentedProgressBar : Control
 
 	private void BuildBar()
 	{
-		// Back bar: full width, left + mid (stretch) + right
+		// Back bar: full width, left + mid (stretch) + right, no gap between segments
 		_backHBox = new HBoxContainer();
+		_backHBox.AddThemeConstantOverride("separation", 0);
 		_backHBox.SetAnchorsPreset(Control.LayoutPreset.FullRect);
 		_backHBox.LayoutMode = 1; // Anchors
 		AddChild(_backHBox);
@@ -63,6 +64,7 @@ public partial class SegmentedProgressBar : Control
 		AddChild(_fillClip);
 
 		_fillHBox = new HBoxContainer();
+		_fillHBox.AddThemeConstantOverride("separation", 0);
 		_fillHBox.SetAnchorsPreset(Control.LayoutPreset.FullRect);
 		_fillHBox.LayoutMode = 1; // Anchors
 		_fillClip.AddChild(_fillHBox);

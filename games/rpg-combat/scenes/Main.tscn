@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c2b4x8qm4n1wp"]
 
 [ext_resource type="Script" uid="uid://bofl5h0wrie1h" path="res://scripts/Main.cs" id="1_main"]
-[ext_resource type="Texture2D" uid="uid://gkixr5td3hmy" path="res://assets/UI/panelInset_beige.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://biauma60qidf6" path="res://assets/UI/background.png" id="2_cvmbd"]
 [ext_resource type="Texture2D" uid="uid://cj36m4ipky7oa" path="res://assets/UI/panel_brown.png" id="3_panel_brown"]
 [ext_resource type="Texture2D" uid="uid://pcb8g5gqdd18" path="res://assets/UI/panel_beige.png" id="4_panel_beige"]
 [ext_resource type="Texture2D" uid="uid://bb3yjkbu2ot1v" path="res://assets/UI/buttonSquare_brown.png" id="5_btn_normal"]
@@ -13,12 +13,11 @@
 [ext_resource type="Texture2D" uid="uid://daj07aiobtiyh" path="res://assets/UI/barGreen_horizontalLeft.png" id="11_green_l"]
 [ext_resource type="Texture2D" uid="uid://5ktlwvpmln3a" path="res://assets/UI/barGreen_horizontalMid.png" id="12_green_m"]
 [ext_resource type="Texture2D" uid="uid://djnwk6k1o0lqt" path="res://assets/UI/barGreen_horizontalRight.png" id="13_green_r"]
+[ext_resource type="Texture2D" uid="uid://buaes8wv25kyc" path="res://assets/UI/pikachu-gif-pokemon-image-pixel-art-pikachu.jpg" id="14_bb450"]
 [ext_resource type="Texture2D" uid="uid://dqx6gnfdcuovb" path="res://assets/UI/barBlue_horizontalLeft.png" id="14_blue_l"]
 [ext_resource type="Texture2D" uid="uid://bl2cbpjdyy3rb" path="res://assets/UI/barBlue_horizontalBlue.png" id="15_blue_m"]
 [ext_resource type="Texture2D" uid="uid://csc3oqr74w57m" path="res://assets/UI/barBlue_horizontalRight.png" id="16_blue_r"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_enemy"]
-texture = ExtResource("3_panel_brown")
+[ext_resource type="Texture2D" uid="uid://d4lhugslps7lj" path="res://assets/UI/penhuolong.png" id="18_bb450"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_player"]
 texture = ExtResource("4_panel_beige")
@@ -34,6 +33,9 @@ texture = ExtResource("5_btn_normal")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
 texture = ExtResource("6_btn_pressed")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_enemy"]
+texture = ExtResource("3_panel_brown")
 
 [node name="Main" type="Control" unique_id=1872786344]
 layout_mode = 3
@@ -51,9 +53,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_bg")
-expand_mode = 2
-stretch_mode = 3
+texture = ExtResource("2_cvmbd")
+expand_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1628999574]
 layout_mode = 1
@@ -67,63 +68,36 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="MarginContainer" unique_id=1305728944]
+[node name="Columns" type="HBoxContainer" parent="MarginContainer" unique_id=1305728944]
 layout_mode = 2
-theme_override_constants/separation = 0
+theme_override_constants/separation = 8
 
-[node name="BattleArena" type="Control" parent="MarginContainer/VBox" unique_id=130253482]
-custom_minimum_size = Vector2(240, 240)
+[node name="LeftColumn" type="VBoxContainer" parent="MarginContainer/Columns" unique_id=1337002001]
+custom_minimum_size = Vector2(104, 0)
 layout_mode = 2
-size_flags_vertical = 3
+theme_override_constants/separation = 8
 
-[node name="EnemyPanel" type="PanelContainer" parent="MarginContainer/VBox/BattleArena" unique_id=1618007940]
-layout_mode = 1
-offset_right = 220.0
-offset_bottom = 64.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_enemy")
-
-[node name="EnemyVBox" type="VBoxContainer" parent="MarginContainer/VBox/BattleArena/EnemyPanel" unique_id=1576841277]
+[node name="PlayerPanel" type="PanelContainer" parent="MarginContainer/Columns/LeftColumn" unique_id=1807724969]
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="EnemyName" type="Label" parent="MarginContainer/VBox/BattleArena/EnemyPanel/EnemyVBox" unique_id=621140821]
-layout_mode = 2
-text = "Enemy Lv5"
-
-[node name="EnemyHPBar" type="Control" parent="MarginContainer/VBox/BattleArena/EnemyPanel/EnemyVBox" unique_id=1610409814]
-custom_minimum_size = Vector2(0, 14)
-layout_mode = 2
-script = ExtResource("7_segbar")
-BackLeft = ExtResource("8_back_l")
-BackMid = ExtResource("9_back_m")
-BackRight = ExtResource("10_back_r")
-FillLeft = ExtResource("11_green_l")
-FillMid = ExtResource("12_green_m")
-FillRight = ExtResource("13_green_r")
-Value = 80.0
-MaxValue = 80.0
-
-[node name="PlayerPanel" type="PanelContainer" parent="MarginContainer/VBox/BattleArena" unique_id=1807724969]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -236.0
-offset_top = -88.0
-grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_player")
 
-[node name="PlayerVBox" type="VBoxContainer" parent="MarginContainer/VBox/BattleArena/PlayerPanel" unique_id=8663465]
+[node name="PlayerMargin" type="MarginContainer" parent="MarginContainer/Columns/LeftColumn/PlayerPanel" unique_id=1807724970]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="PlayerVBox" type="VBoxContainer" parent="MarginContainer/Columns/LeftColumn/PlayerPanel/PlayerMargin" unique_id=8663465]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="PlayerName" type="Label" parent="MarginContainer/VBox/BattleArena/PlayerPanel/PlayerVBox" unique_id=409530994]
+[node name="PlayerName" type="Label" parent="MarginContainer/Columns/LeftColumn/PlayerPanel/PlayerMargin/PlayerVBox" unique_id=409530994]
 layout_mode = 2
 text = "Player Lv5"
 
-[node name="PlayerHPBar" type="Control" parent="MarginContainer/VBox/BattleArena/PlayerPanel/PlayerVBox" unique_id=851736594]
+[node name="PlayerHPBar" type="Control" parent="MarginContainer/Columns/LeftColumn/PlayerPanel/PlayerMargin/PlayerVBox" unique_id=851736594]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 script = ExtResource("7_segbar")
@@ -134,11 +108,11 @@ FillLeft = ExtResource("11_green_l")
 FillMid = ExtResource("12_green_m")
 FillRight = ExtResource("13_green_r")
 
-[node name="PlayerHPLabel" type="Label" parent="MarginContainer/VBox/BattleArena/PlayerPanel/PlayerVBox" unique_id=1511783761]
+[node name="PlayerHPLabel" type="Label" parent="MarginContainer/Columns/LeftColumn/PlayerPanel/PlayerMargin/PlayerVBox" unique_id=1511783761]
 layout_mode = 2
 text = "100/100"
 
-[node name="PlayerMPBar" type="Control" parent="MarginContainer/VBox/BattleArena/PlayerPanel/PlayerVBox" unique_id=380389954]
+[node name="PlayerMPBar" type="Control" parent="MarginContainer/Columns/LeftColumn/PlayerPanel/PlayerMargin/PlayerVBox" unique_id=380389954]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 script = ExtResource("7_segbar")
@@ -151,71 +125,146 @@ FillRight = ExtResource("16_blue_r")
 Value = 20.0
 MaxValue = 20.0
 
-[node name="PlayerMPLabel" type="Label" parent="MarginContainer/VBox/BattleArena/PlayerPanel/PlayerVBox" unique_id=520975000]
+[node name="PlayerMPLabel" type="Label" parent="MarginContainer/Columns/LeftColumn/PlayerPanel/PlayerMargin/PlayerVBox" unique_id=520975000]
 layout_mode = 2
 text = "MP: 20/20"
 
-[node name="BottomSection" type="HBoxContainer" parent="MarginContainer/VBox" unique_id=1181064470]
-custom_minimum_size = Vector2(0, 100)
+[node name="PlayerSpritePanel" type="PanelContainer" parent="MarginContainer/Columns/LeftColumn" unique_id=1337001004]
+custom_minimum_size = Vector2(104, 104)
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_styles/panel = SubResource("StyleBoxTexture_player")
 
-[node name="MessagePanel" type="PanelContainer" parent="MarginContainer/VBox/BottomSection" unique_id=198232009]
+[node name="PlayerSpriteCenter" type="CenterContainer" parent="MarginContainer/Columns/LeftColumn/PlayerSpritePanel" unique_id=1337001005]
 layout_mode = 2
-size_flags_horizontal = 3
+
+[node name="PlayerSpriteTexture" type="TextureRect" parent="MarginContainer/Columns/LeftColumn/PlayerSpritePanel/PlayerSpriteCenter" unique_id=1337001006]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("14_bb450")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MessagePanel" type="PanelContainer" parent="MarginContainer/Columns/LeftColumn" unique_id=198232009]
+visible = false
+custom_minimum_size = Vector2(104, 104)
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_msg")
 
-[node name="MessageMargin" type="MarginContainer" parent="MarginContainer/VBox/BottomSection/MessagePanel" unique_id=1890852549]
+[node name="MessageMargin" type="MarginContainer" parent="MarginContainer/Columns/LeftColumn/MessagePanel" unique_id=1890852549]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 8
 
-[node name="MessageLabel" type="Label" parent="MarginContainer/VBox/BottomSection/MessagePanel/MessageMargin" unique_id=989009387]
+[node name="MessageLabel" type="Label" parent="MarginContainer/Columns/LeftColumn/MessagePanel/MessageMargin" unique_id=989009387]
 layout_mode = 2
 text = "What will you do?"
 vertical_alignment = 1
 
-[node name="ActionMenuPanel" type="PanelContainer" parent="MarginContainer/VBox/BottomSection" unique_id=815437813]
+[node name="ActionMenuPanel" type="PanelContainer" parent="MarginContainer/Columns/LeftColumn" unique_id=815437813]
+custom_minimum_size = Vector2(104, 104)
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_menu")
 
-[node name="ActionGrid" type="GridContainer" parent="MarginContainer/VBox/BottomSection/ActionMenuPanel" unique_id=1175703025]
+[node name="ActionMargin" type="MarginContainer" parent="MarginContainer/Columns/LeftColumn/ActionMenuPanel" unique_id=815437814]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ActionGrid" type="GridContainer" parent="MarginContainer/Columns/LeftColumn/ActionMenuPanel/ActionMargin" unique_id=1175703025]
 layout_mode = 2
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 2
 
-[node name="AttackButton" type="Button" parent="MarginContainer/VBox/BottomSection/ActionMenuPanel/ActionGrid" unique_id=1770188077]
-custom_minimum_size = Vector2(100, 36)
+[node name="AttackButton" type="Button" parent="MarginContainer/Columns/LeftColumn/ActionMenuPanel/ActionMargin/ActionGrid" unique_id=1770188077]
+custom_minimum_size = Vector2(44, 28)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
 text = "Attack"
 
-[node name="SkillButton" type="Button" parent="MarginContainer/VBox/BottomSection/ActionMenuPanel/ActionGrid" unique_id=549012432]
-custom_minimum_size = Vector2(100, 36)
+[node name="SkillButton" type="Button" parent="MarginContainer/Columns/LeftColumn/ActionMenuPanel/ActionMargin/ActionGrid" unique_id=549012432]
+custom_minimum_size = Vector2(44, 28)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
 text = "Skill"
 
-[node name="DefendButton" type="Button" parent="MarginContainer/VBox/BottomSection/ActionMenuPanel/ActionGrid" unique_id=2020971805]
-custom_minimum_size = Vector2(100, 36)
+[node name="DefendButton" type="Button" parent="MarginContainer/Columns/LeftColumn/ActionMenuPanel/ActionMargin/ActionGrid" unique_id=2020971805]
+custom_minimum_size = Vector2(44, 28)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
 text = "Defend"
 
-[node name="ItemButton" type="Button" parent="MarginContainer/VBox/BottomSection/ActionMenuPanel/ActionGrid" unique_id=1936113095]
-custom_minimum_size = Vector2(100, 36)
+[node name="ItemButton" type="Button" parent="MarginContainer/Columns/LeftColumn/ActionMenuPanel/ActionMargin/ActionGrid" unique_id=1936113095]
+custom_minimum_size = Vector2(44, 28)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_normal")
 text = "Item"
+
+[node name="Spacer" type="Control" parent="MarginContainer/Columns" unique_id=1337002002]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightColumn" type="VBoxContainer" parent="MarginContainer/Columns" unique_id=1337002003]
+custom_minimum_size = Vector2(104, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EnemyPanel" type="PanelContainer" parent="MarginContainer/Columns/RightColumn" unique_id=1618007940]
+custom_minimum_size = Vector2(104, 104)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_enemy")
+
+[node name="EnemyMargin" type="MarginContainer" parent="MarginContainer/Columns/RightColumn/EnemyPanel" unique_id=1618007941]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="EnemyVBox" type="VBoxContainer" parent="MarginContainer/Columns/RightColumn/EnemyPanel/EnemyMargin" unique_id=1576841277]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="EnemyName" type="Label" parent="MarginContainer/Columns/RightColumn/EnemyPanel/EnemyMargin/EnemyVBox" unique_id=621140821]
+layout_mode = 2
+text = "Enemy Lv5"
+
+[node name="EnemyHPBar" type="Control" parent="MarginContainer/Columns/RightColumn/EnemyPanel/EnemyMargin/EnemyVBox" unique_id=1610409814]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+script = ExtResource("7_segbar")
+BackLeft = ExtResource("8_back_l")
+BackMid = ExtResource("9_back_m")
+BackRight = ExtResource("10_back_r")
+FillLeft = ExtResource("11_green_l")
+FillMid = ExtResource("12_green_m")
+FillRight = ExtResource("13_green_r")
+Value = 80.0
+MaxValue = 80.0
+
+[node name="EnemySpritePanel" type="PanelContainer" parent="MarginContainer/Columns/RightColumn" unique_id=1337001001]
+custom_minimum_size = Vector2(104, 104)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_enemy")
+
+[node name="EnemySpriteCenter" type="CenterContainer" parent="MarginContainer/Columns/RightColumn/EnemySpritePanel" unique_id=1337001002]
+layout_mode = 2
+
+[node name="EnemySpriteTexture" type="TextureRect" parent="MarginContainer/Columns/RightColumn/EnemySpritePanel/EnemySpriteCenter" unique_id=1337001003]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("18_bb450")
+expand_mode = 1
+stretch_mode = 5
