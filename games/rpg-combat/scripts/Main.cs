@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class Main : Control
+public partial class Combat : Control
 {
 	public override void _Ready()
 	{

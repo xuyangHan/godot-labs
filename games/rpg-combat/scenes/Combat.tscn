@@ -37,7 +37,7 @@ texture = ExtResource("6_btn_pressed")
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_enemy"]
 texture = ExtResource("3_panel_brown")
 
-[node name="Main" type="Control" unique_id=1872786344]
+[node name="Combat" type="Control" unique_id=1872786344]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
