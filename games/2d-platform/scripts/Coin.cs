@@ -13,12 +13,11 @@ public partial class Coin : Area2D
 	{
 	}
 	
-	// This is the method the Signal is looking for
 	private void _on_body_entered(Node2D body)
 	{
 		GD.Print("Coin collected by: " + body.Name);
 		
-		// Optional: Remove the coin when touched
+		// Remove the coin when touched
 		QueueFree(); 
 	}
 }
