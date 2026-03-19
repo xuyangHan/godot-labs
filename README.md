@@ -111,10 +111,15 @@ Alongside development, I write a series of technical articles about **game syste
 
 2. **[From game logic to the screen](blogs/02-logic-to-screen-signals-scenes-input.md)** – Separating Board/Piece from UI, PackedScene/Instantiate, signals, input (`_GuiInput`), and optional threading (`CallDeferred`).
 
+3. **[From Input to Playable Loop](blogs/03-2d-platform-core-loop-godot-csharp.md)** – Building a beginner 2D platformer loop in Godot C#: movement, jumping, animation states, coin pickup, death flow, and restart.
+
+4. **[Collision, Reusability, and Polish](blogs/04-2d-platform-collisions-reusability-polish.md)** – Collision layers/masks, reusable scenes, patrol AI with `RayCast2D`, animation-driven gameplay events, and beginner-safe polish.
+
 ### Series arc
 
-- **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (these two posts). Optional later: animation, audio, saving, C# vs GDScript.
-- **Phase 2 (In practice):** By game type – turn-based (e.g. Pokémon-style), then action/real-time, then multiplayer (e.g. MOBA).
+- **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (chess-based posts).
+- **Phase 2 (Applied gameplay):** Platformer essentials (core loop + systems thinking), then other game types.
+- **Phase 3 (In practice):** By game type – turn-based (e.g. Pokémon-style), action/real-time, then multiplayer (e.g. MOBA).
 
 The chess project illustrates turn-based state, move history, and clear separation of rules vs view, which will be referenced in the turn-based in-practice post.
 
