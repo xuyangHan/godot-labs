@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dewi1dokqxdq1" path="res://scences/coin.tscn" id="4_cfxbr"]
 [ext_resource type="PackedScene" uid="uid://bf7jmh4rlrqhk" path="res://scences/kill_zone.tscn" id="5_b174u"]
 [ext_resource type="PackedScene" uid="uid://c6smjbsu7fc" path="res://scences/slime.tscn" id="6_yru2q"]
+[ext_resource type="AudioStream" uid="uid://bg1s6jokaiq8e" path="res://assets/music/time_for_adventure.mp3" id="7_cho2i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cfxbr"]
 texture = ExtResource("2_jx3ei")
@@ -417,3 +418,7 @@ position = Vector2(111, 57)
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="KillZone" unique_id=1400006658]
 shape = SubResource("WorldBoundaryShape2D_yru2q")
+
+[node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=1762368334]
+stream = ExtResource("7_cho2i")
+autoplay = true
