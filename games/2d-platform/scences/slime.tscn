@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://c6smjbsu7fc"]
+
+[ext_resource type="Texture2D" uid="uid://dgllox1f1jsk5" path="res://assets/sprites/slime_green.png" id="1_d1vlr"]
+[ext_resource type="Script" uid="uid://cbu3kt4e6xvgr" path="res://scripts/Slime.cs" id="1_gr5yi"]
+[ext_resource type="PackedScene" uid="uid://bf7jmh4rlrqhk" path="res://scences/kill_zone.tscn" id="2_gssbl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gssbl"]
+atlas = ExtResource("1_d1vlr")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gr5yi"]
+atlas = ExtResource("1_d1vlr")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5gtdx"]
+atlas = ExtResource("1_d1vlr")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jqjoe"]
+atlas = ExtResource("1_d1vlr")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mdeol"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gssbl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gr5yi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5gtdx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jqjoe")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_x3n2l"]
+radius = 5.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gr5yi"]
+size = Vector2(10, 12)
+
+[node name="Slime" type="CharacterBody2D" unique_id=1785293125]
+collision_layer = 4
+script = ExtResource("1_gr5yi")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1225848022]
+position = Vector2(0, -12)
+sprite_frames = SubResource("SpriteFrames_mdeol")
+autoplay = "default"
+frame_progress = 0.6328877
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=95910212]
+position = Vector2(0, -6)
+shape = SubResource("CircleShape2D_x3n2l")
+
+[node name="KillZone" parent="." unique_id=236491056 instance=ExtResource("2_gssbl")]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="KillZone" unique_id=450190914]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_gr5yi")
+
+[node name="RayCastRight" type="RayCast2D" parent="." unique_id=1271493383]
+target_position = Vector2(15, 0)
+
+[node name="RayCastLeft" type="RayCast2D" parent="." unique_id=1354128076]
+target_position = Vector2(-15, 0)
