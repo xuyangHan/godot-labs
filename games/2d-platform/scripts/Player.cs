@@ -20,6 +20,7 @@ public partial class Player : CharacterBody2D
 		if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
 		{
 			velocity.Y = JumpVelocity;
+			GetNode<AudioStreamPlayer2D>("Jump").Play();
 		}
 
 		// Get the input direction and handle the movement/deceleration.

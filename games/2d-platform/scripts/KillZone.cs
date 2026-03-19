@@ -22,8 +22,6 @@ public partial class KillZone : Area2D
 	{
 		GD.Print("You Died!");
 		
-
-		// Use GetNodeOrNull to prevent crashing if the node is missing
 		var collisionShape = body.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
 		if (collisionShape != null)
 		{
