@@ -356,6 +356,8 @@ These are not “advanced systems” — they are just the building blocks that 
 
 Once you understand how they fit together, you can reuse the same structure in almost any small game.
 
+The full project used in this tutorial is available in the [project repository](/games/2d-platform/), so you can inspect the same scenes and scripts.
+
 ---
 
 ### Next Post
