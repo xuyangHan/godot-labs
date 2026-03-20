@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://bdalrgldc8q25"]
+
+[ext_resource type="Texture2D" uid="uid://dwvieaatiwy3h" path="res://assets/ui/PNG/Players/Tilemap/tilemap_packed.png" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://nmyvg8y36wil" path="res://scenes/Player.cs" id="1_g2els"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(0, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qhqgy"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(0, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqkch"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(24, 48, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qlg0r"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g2els")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qhqgy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dqkch")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3vyb7"]
+
+[node name="Player" type="CharacterBody2D" unique_id=346799902]
+script = ExtResource("1_g2els")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=581646565]
+sprite_frames = SubResource("SpriteFrames_qlg0r")
+animation = &"idle"
+frame_progress = 0.07980491
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=446288903]
+zoom = Vector2(2.99, 2.99)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1912214004]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_3vyb7")
