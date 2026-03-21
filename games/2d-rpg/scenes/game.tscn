@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/slime.tscn" id="3_iywne"]
 [ext_resource type="PackedScene" path="res://scenes/coin.tscn" id="3_lnu2h"]
 [ext_resource type="AudioStream" uid="uid://bg1s6jokaiq8e" path="res://assets/music/time_for_adventure.mp3" id="4_lbhrr"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="5_hud"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
 texture = ExtResource("1_uwrxv")
@@ -650,3 +651,5 @@ position = Vector2(-483, 43)
 
 [node name="Slime3" parent="." unique_id=1143654489 instance=ExtResource("3_iywne")]
 position = Vector2(-208, -274)
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]

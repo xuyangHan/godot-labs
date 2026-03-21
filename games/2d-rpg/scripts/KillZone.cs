@@ -29,12 +29,6 @@ public partial class KillZone : Area2D
 		GD.Print("You Died!");
 		_killSound?.Play();
 		
-		var collisionShape = body.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
-		if (collisionShape != null)
-		{
-			collisionShape.QueueFree();
-		}
-
 		if (_deathOverlay != null)
 			{
 				_deathOverlay.Visible = true;
@@ -51,6 +45,7 @@ public partial class KillZone : Area2D
 	private void _on_timer_timeout() 
 	{
 		Engine.TimeScale = 1.0f;
+		GetNodeOrNull<GameManager>("/root/GameManager")?.ResetRun();
 		GetTree().ReloadCurrentScene();
 	}
 }
