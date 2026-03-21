@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdvpdasm66xtq" path="res://scripts/KillZone.cs" id="1_xwhni"]
 [ext_resource type="AudioStream" uid="uid://d4k7fjoqcjipn" path="res://assets/Sounds/lose-a.ogg" id="2_l4ff3"]
+[ext_resource type="AudioStream" uid="uid://dxhg5got3y4ra" path="res://assets/Sounds/hurt.wav" id="3_koymq"]
 
 [node name="KillZone" type="Area2D" unique_id=236491056]
 collision_mask = 2
@@ -22,6 +23,9 @@ color = Color(1, 1, 1, 0)
 
 [node name="KillSound" type="AudioStreamPlayer2D" parent="." unique_id=1355476586]
 stream = ExtResource("2_l4ff3")
+
+[node name="HitSound" type="AudioStreamPlayer2D" parent="." unique_id=1927089004]
+stream = ExtResource("3_koymq")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
