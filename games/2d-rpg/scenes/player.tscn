@@ -38,18 +38,27 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3vyb7"]
+radius = 5.0
 
 [node name="Player" type="CharacterBody2D" unique_id=346799902]
 script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=581646565]
+position = Vector2(9.536743e-07, 9.536743e-07)
+scale = Vector2(0.625, 0.625)
 sprite_frames = SubResource("SpriteFrames_qlg0r")
 animation = &"idle"
 frame_progress = 0.07980491
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=446288903]
 zoom = Vector2(2.99, 2.99)
+limit_left = -650
+limit_top = -350
+limit_right = 650
+limit_bottom = 200
+position_smoothing_enabled = true
+position_smoothing_speed = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1912214004]
-position = Vector2(0, 3)
+position = Vector2(0, 2)
 shape = SubResource("CircleShape2D_3vyb7")
