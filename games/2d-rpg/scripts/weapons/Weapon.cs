@@ -3,6 +3,8 @@ using Godot;
 [GlobalClass]
 public partial class Weapon : Node2D
 {
+	[Export] public float AimOffsetRadians { get; set; }
+
 	public virtual void SetEquipped(bool equipped)
 	{
 		WeaponEquipment.ApplyEquipped(this, equipped);

@@ -1,6 +1,6 @@
 using Godot;
 
-// Physics: player body layer 2, enemy body layer 4, weapon HitArea layer 8 + mask 4 (see weapon scenes).
+// Physics: world/tiles layer 1, player 2, enemies 4, weapon HitArea 8, bullets 32 + mask (1|4).
 public static class WeaponEquipment
 {
 	public static void ApplyEquipped(Node2D weapon, bool equipped)

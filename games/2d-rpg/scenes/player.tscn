@@ -2,8 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://dwvieaatiwy3h" path="res://assets/ui/PNG/Players/Tilemap/tilemap_packed.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://nmyvg8y36wil" path="res://scripts/Player.cs" id="1_g2els"]
-[ext_resource type="Script" path="res://scripts/PlayerWeaponPivot.cs" id="2_weapon_pivot"]
+[ext_resource type="Script" uid="uid://du53hthgcdpg4" path="res://scripts/PlayerWeaponPivot.cs" id="2_weapon_pivot"]
 [ext_resource type="PackedScene" uid="uid://o7usueumbdrk" path="res://scenes/weapons/weapon_sword.tscn" id="3_weapon_sword"]
+[ext_resource type="PackedScene" uid="uid://c00cmad8hl5x8" path="res://scenes/weapons/weapon_gun.tscn" id="5_qlg0r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
 atlas = ExtResource("1_3vyb7")
@@ -72,3 +73,5 @@ script = ExtResource("2_weapon_pivot")
 
 [node name="weapon_sword" parent="WeaponPivot" unique_id=817832840 instance=ExtResource("3_weapon_sword")]
 position = Vector2(0, -2)
+
+[node name="weapon_gun" parent="WeaponPivot" unique_id=658788830 instance=ExtResource("5_qlg0r")]

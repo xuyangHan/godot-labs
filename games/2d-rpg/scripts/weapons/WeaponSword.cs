@@ -6,8 +6,6 @@ public partial class WeaponSword : Weapon
 	private const double HitWindowStart = 0.2;
 	private const double HitWindowEnd = 0.37;
 
-	[Export] public float AimOffsetRadians { get; set; }
-
 	private Area2D _hitArea;
 	private AnimationPlayer _animationPlayer;
 	private readonly HashSet<ulong> _hitThisSwing = new();

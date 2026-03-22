@@ -39,8 +39,14 @@ public partial class PlayerWeaponPivot : Node2D
 		}
 		if (_weapons.Count > 0)
 			return;
-		var sword = GetNodeOrNull("weapon_sword");
-		if (sword is Weapon w)
+		TryAddWeaponFallback("weapon_sword");
+		TryAddWeaponFallback("weapon_gun");
+	}
+
+	private void TryAddWeaponFallback(string nodeName)
+	{
+		var n = GetNodeOrNull(nodeName);
+		if (n is Weapon w)
 			_weapons.Add(w);
 	}
 
@@ -65,9 +71,7 @@ public partial class PlayerWeaponPivot : Node2D
 				dir.Y = Mathf.Clamp(dir.Y, -maxVert, maxVert);
 				dir = dir.LengthSquared() > 1e-6f ? dir.Normalized() : new Vector2(1f, 0f);
 
-				float angle = dir.Angle();
-				if (active is WeaponSword sword)
-					angle += sword.AimOffsetRadians;
+				float angle = dir.Angle() + active.AimOffsetRadians;
 				Rotation = angle;
 
 				bool aimLeft = mouse.X < GlobalPosition.X;
