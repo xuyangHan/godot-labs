@@ -5,6 +5,10 @@ public partial class Player : CharacterBody2D
 {
 	public const float Speed = 130.0f;
 
+	/// <summary>Max angle between aim direction and horizontal (0° = straight right/left). Smaller = less aim over head / under feet.</summary>
+	[Export(PropertyHint.Range, "20,80,1")]
+	public float MaxAimElevationFromHorizontalDegrees { get; set; } = 52f;
+
 	private Node2D _weaponPivot;
 	private readonly List<Weapon> _weapons = new();
 	private int _loadoutSlot;
@@ -59,18 +63,32 @@ public partial class Player : CharacterBody2D
 		if (active != null)
 		{
 			Vector2 mouse = GetGlobalMousePosition();
-			Vector2 dir = mouse - _weaponPivot.GlobalPosition;
-			if (dir.LengthSquared() > 0.0001f)
+			Vector2 raw = mouse - _weaponPivot.GlobalPosition;
+			if (raw.LengthSquared() > 0.0001f)
 			{
+				Vector2 dir = raw.Normalized();
+				float maxVert = Mathf.Sin(Mathf.DegToRad(MaxAimElevationFromHorizontalDegrees));
+				dir.Y = Mathf.Clamp(dir.Y, -maxVert, maxVert);
+				dir = dir.LengthSquared() > 1e-6f ? dir.Normalized() : new Vector2(1f, 0f);
+
 				float angle = dir.Angle();
 				if (active is WeaponSword sword)
 					angle += sword.AimOffsetRadians;
 				_weaponPivot.Rotation = angle;
+
+				bool aimLeft = mouse.X < _weaponPivot.GlobalPosition.X;
+				_weaponPivot.Scale = aimLeft ? new Vector2(1f, -1f) : new Vector2(1f, 1f);
+
 				active.SetAimDirection(dir);
 			}
 
 			if (Input.IsActionJustPressed("attack"))
 				active.TryPrimaryAttack();
+		}
+		else
+		{
+			_weaponPivot.Scale = Vector2.One;
+			_weaponPivot.Rotation = 0f;
 		}
 	}
 
