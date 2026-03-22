@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/slime.tscn" id="3_iywne"]
 [ext_resource type="PackedScene" path="res://scenes/coin.tscn" id="3_lnu2h"]
 [ext_resource type="AudioStream" uid="uid://bg1s6jokaiq8e" path="res://assets/music/time_for_adventure.mp3" id="4_lbhrr"]
-[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" uid="uid://bo7rdmnulr2ac" path="res://scenes/hud.tscn" id="5_hud"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
 texture = ExtResource("1_uwrxv")
@@ -596,9 +596,6 @@ position = Vector2(-387, -80)
 tile_map_data = PackedByteArray("AAALAPr/AAAIAAMAAAALAPv/AAAIAAQAAADx//X/AAAIAAMAAADx//b/AAAIAAQAAADs//z/AAAIAAMAAADs//3/AAAIAAQAAAD3/wUAAAAIAAMAAAD3/wYAAAAIAAQAAAARAAQAAAAIAAMAAAARAAUAAAAIAAQAAAAaAP3/AAAIAAMAAAAaAP7/AAAIAAQAAAASAPL/AAAIAAMAAAASAPP/AAAIAAQAAAD1//j/AAAJAAMAAAAAAPf/AAAJAAMAAAD7//3/AAAJAAMAAAD6//3/AAAJAAMAAADv/wQAAAAJAAMAAAALAAMAAAAJAAMAAAAXAPj/AAAJAAMAAAD9/wUAAAAIAAIAAAD2/wIAAAAIAAIAAADr//b/AAAIAAIAAADr//P/AAAIAAIAAAAJAPP/AAAIAAIAAAAVAAIAAAAIAAIAAAAcAAMAAAADAAMAAAAcAAQAAAADAAQAAAAeAPT/AAADAAMAAAAeAPX/AAADAAQAAAAXAPP/AAADAAMAAAAXAPT/AAADAAQAAAAWAAUAAAADAAMAAAAWAAYAAAADAAQAAADs/wQAAAADAAIAAADr//r/AAADAAIAAADt//P/AAADAAIAAAD2//7/AAADAAIAAAAAAPr/AAADAAIAAAAEAPP/AAADAAIAAAAFAAYAAAAOAAMAAAAFAAcAAAAOAAQAAADx/wYAAAAOAAMAAADx/wcAAAAOAAQAAADz//3/AAAOAAMAAADz//7/AAAOAAQAAAAZAPT/AAAOAAMAAAAZAPX/AAAOAAQAAADd//f/AAAIAAoAAADd//j/AAAIAAsAAADe//f/AAAJAAoAAADe//j/AAAJAAsAAADf//T/AAAAAAwAAADg//D/AAADAAIAAADc//H/AAADAAIAAADj//D/AAADAAMAAADj//H/AAADAAQAAADm//f/AAADAAMAAADm//j/AAADAAQAAADW//L/AAADAAMAAADW//P/AAADAAQAAADm//X/AAADAAIAAADn//D/AAADAAIAAADz/+z/AAAJAAMAAAD7//H/AAAJAAMAAAD2/+3/AAAIAAIAAAD4/+z/AAAIAAIAAAD9/+z/AAAIAAIAAAD9/+v/AAAIAAIAAAD4//b/AAAIAAIAAADr/+7/AAAIAAIAAAABAO//AAAJAAQAAADz//P/AAAJAAQAAAD+//L/AAAIAAMAAAD+//P/AAAIAAQAAADv/+7/AAAQAAkAAADu/+7/AAAQAAkAAADt/+7/AAAQAAkAAADs/+7/AAAPAAkAAADs/+//AAAPAAoAAADs//D/AAAPAAoAAADs//H/AAAPAAoAAADs//L/AAAPAAsAAADt//L/AAAEAAoAAADv//L/AAAFAAoAAADw//L/AAAQAAsAAADx//L/AAAQAAsAAADh/+3/AAACAAwAAADt/+//AAACAAwAAAD5/+v/AAAGAAwAAAAKAPb/AAAIAAgAAAAKAPf/AAAIAAkAAAALAPb/AAAJAAgAAAALAPf/AAAJAAkAAAD+/wcAAAAIAAgAAAD+/wgAAAAIAAkAAAD//wcAAAAJAAgAAAD//wgAAAAJAAkAAAAdAAoAAAAIAAoAAAAdAAsAAAAIAAsAAAAeAAoAAAAJAAoAAAAeAAsAAAAJAAsAAADa/wIAAAAHAAwAAADf/wAAAAAPAAYAAADf////AAAPAAUAAADg////AAAQAAUAAADh////AAAQAAUAAADi////AAAQAAUAAADj////AAAQAAUAAADk////AAAQAAUAAADl////AAAQAAUAAADm////AAAQAAUAAADn////AAAQAAUAAADo////AAARAAUAAADo/wAAAAARAAYAAADo/wEAAAARAAYAAADo/wIAAAARAAYAAADo/wMAAAARAAYAAADo/wQAAAARAAcAAADn/wQAAAAQAAcAAADm/wQAAAAFAAoAAADk/wQAAAAEAAoAAADj/wQAAAAQAAcAAADi/wQAAAAQAAcAAADi/wAAAAAOAAMAAADi/wEAAAAOAAQAAADo/wcAAAAOAAMAAADo/wgAAAAOAAQAAADj/wcAAAAOAAMAAADj/wgAAAAOAAQAAADa/wUAAAAIAAgAAADa/wYAAAAIAAkAAADb/wUAAAAJAAgAAADb/wYAAAAJAAkAAADn/wAAAAACAAwAAADp/wQAAAANAAIAAADu////AAAMAAMAAADu/wAAAAAMAAQAAADv////AAANAAMAAADv/wAAAAANAAQAAAA=")
 tile_set = SubResource("TileSet_iywne")
 
-[node name="Slime" parent="." unique_id=1785293125 instance=ExtResource("3_iywne")]
-position = Vector2(-562, -257)
-
 [node name="Coins" type="Node" parent="." unique_id=90615788]
 
 [node name="Coin" parent="Coins" unique_id=25488418 instance=ExtResource("3_lnu2h")]
@@ -634,6 +631,17 @@ position = Vector2(70, 28)
 [node name="Coin11" parent="Coins" unique_id=760458410 instance=ExtResource("3_lnu2h")]
 position = Vector2(-471, 57)
 
+[node name="Slimes" type="Node" parent="." unique_id=85630622]
+
+[node name="Slime" parent="Slimes" unique_id=1785293125 instance=ExtResource("3_iywne")]
+position = Vector2(-562, -257)
+
+[node name="Slime2" parent="Slimes" unique_id=1847616536 instance=ExtResource("3_iywne")]
+position = Vector2(-483, 43)
+
+[node name="Slime3" parent="Slimes" unique_id=1143654489 instance=ExtResource("3_iywne")]
+position = Vector2(-208, -274)
+
 [node name="Boundary" type="Area2D" parent="." unique_id=2108087499]
 
 [node name="bottom" type="CollisionShape2D" parent="Boundary" unique_id=335091054]
@@ -646,10 +654,4 @@ shape = SubResource("WorldBoundaryShape2D_lnu2h")
 stream = ExtResource("4_lbhrr")
 autoplay = true
 
-[node name="Slime2" parent="." unique_id=1847616536 instance=ExtResource("3_iywne")]
-position = Vector2(-483, 43)
-
-[node name="Slime3" parent="." unique_id=1143654489 instance=ExtResource("3_iywne")]
-position = Vector2(-208, -274)
-
-[node name="HUD" parent="." instance=ExtResource("5_hud")]
+[node name="HUD" parent="." unique_id=1686534525 instance=ExtResource("5_hud")]

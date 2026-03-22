@@ -12,9 +12,15 @@ public partial class Slime : CharacterBody2D
 
 	public override void _Ready()
 	{
+		AddToGroup("enemies");
 		_rayCastRight = GetNode<RayCast2D>("RayCastRight");
 		_rayCastLeft = GetNode<RayCast2D>("RayCastLeft");
 		_animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+	}
+
+	public void TakeDamage(int amount, Node2D source = null)
+	{
+		QueueFree();
 	}
 
 	public override void _PhysicsProcess(double delta)
