@@ -23,9 +23,20 @@ The full project used in this tutorial is available in the [project repository](
 
 ## 1. From Collision Basics to Combat Interactions
 
-In earlier posts, collision was mostly about movement boundaries and trigger areas.
+In earlier posts, collision was mostly about:
 
-In this RPG, collision becomes a gameplay event pipeline:
+* stopping the player from walking through walls  
+* detecting simple triggers like coins  
+
+In this RPG, collision becomes something more important:
+
+> it decides when combat happens.
+
+---
+
+### From collision to gameplay
+
+Instead of just blocking movement, collision now drives a full gameplay flow:
 
 ```text
 attack starts
@@ -39,7 +50,17 @@ damage method called
 death effect / cleanup
 ```
 
-So combat is really “collision + rules + feedback.”
+---
+
+### A simple way to think about it
+
+> Combat is: **collision + rules + feedback**
+
+* **collision** → detects that something was hit
+* **rules** → decide what happens (damage, ignore, etc.)
+* **feedback** → shows the result (animation, sound, enemy death)
+
+Once you see combat this way, it becomes much easier to design and extend.
 
 ---
 
@@ -73,6 +94,52 @@ That is the key scalability win.
 * cycles loadout slots
 * computes mouse-based aim direction
 * calls `active.TryPrimaryAttack()` when attack input is pressed
+
+Here is a real excerpt from `PlayerWeaponPivot.cs`:
+
+```csharp
+public override void _Process(double delta)
+{
+    // 1) Handle one-press weapon cycling (Tab or mapped action).
+    bool tabPhysical = Input.IsPhysicalKeyPressed(Key.Tab);
+    bool tabPhysicalEdge = tabPhysical && !_tabPhysicalPrev;
+    _tabPhysicalPrev = tabPhysical;
+
+    if (tabPhysicalEdge || Input.IsActionJustPressed("weapon_cycle"))
+        CycleWeapon();
+
+    var active = ActiveWeapon;
+    if (active != null)
+    {
+        // 2) Aim from pivot -> mouse world position.
+        Vector2 mouse = GetGlobalMousePosition();
+        Vector2 raw = mouse - GlobalPosition;
+        if (raw.LengthSquared() > 0.0001f)
+        {
+            Vector2 dir = raw.Normalized();
+
+            // 3) Clamp vertical aim so weapons do not over-rotate.
+            float maxVert = Mathf.Sin(Mathf.DegToRad(MaxAimElevationFromHorizontalDegrees));
+            dir.Y = Mathf.Clamp(dir.Y, -maxVert, maxVert);
+            dir = dir.LengthSquared() > 1e-6f ? dir.Normalized() : new Vector2(1f, 0f);
+
+            float angle = dir.Angle() + active.AimOffsetRadians;
+            Rotation = angle;
+
+            // 4) Flip pivot when aiming left to keep sprites oriented correctly.
+            bool aimLeft = mouse.X < GlobalPosition.X;
+            Scale = aimLeft ? new Vector2(1f, -1f) : new Vector2(1f, 1f);
+
+            // 5) Pass the final world direction to the active weapon.
+            active.SetAimDirection(dir);
+        }
+
+        // 6) Fire through the weapon interface (melee/ranged handled internally).
+        if (Input.IsActionJustPressed("attack"))
+            active.TryPrimaryAttack();
+    }
+}
+```
 
 This creates a clean separation:
 
@@ -124,11 +191,85 @@ Combat flow for a shot:
 3. bullet moves each frame
 4. bullet collides with enemy/world and resolves hit
 
+Real project excerpt (`WeaponGun.cs`):
+
+```csharp
+public override void TryPrimaryAttack()
+{
+    // 1) Block firing during cooldown or if no bullet scene is assigned.
+    if (_cooldownLeft > 0 || BulletScene == null)
+        return;
+
+    // 2) Spawn bullet into the world (not as a child of the weapon node).
+    var world = GetParent()?.GetParent()?.GetParent() ?? GetTree().CurrentScene;
+    if (world == null)
+        return;
+
+    _animationPlayer?.Play("shoot");
+
+    var bulletNode = BulletScene.Instantiate<Node2D>();
+    world.AddChild(bulletNode);
+
+    // 3) Spawn near muzzle and push forward along current aim direction.
+    Vector2 spawn = GetNode<Node2D>("Sprite2D").GlobalPosition;
+    spawn += _aimWorld * MuzzleLeadPixels;
+    bulletNode.GlobalPosition = spawn;
+
+    // 4) Pass starting velocity to bullet script.
+    if (bulletNode is Bullet bullet)
+        bullet.Velocity = _aimWorld * bullet.Speed;
+
+    // 5) Start cooldown timer.
+    _cooldownLeft = FireCooldownSeconds;
+}
+```
+
 In `Bullet.cs`, the `OnBodyEntered` method applies the same damage path as melee:
 
 * direct typed path for `Slime`
 * generic group/method path for other enemy types
 * world/tile collision frees the bullet
+
+Real project excerpt (`Bullet.cs`):
+
+```csharp
+public override void _Process(double delta)
+{
+    // Move projectile every frame using assigned velocity.
+    GlobalPosition += Velocity * (float)delta;
+}
+
+private void OnBodyEntered(Node2D body)
+{
+    if (body == null || !IsInstanceValid(this))
+        return;
+    if (body.IsInGroup("player"))
+        return; // Ignore player to avoid self-hit.
+
+    // Enemy hit: apply damage and remove projectile.
+    if (body is Slime slime)
+    {
+        slime.TakeDamage(1, this);
+        QueueFree();
+        return;
+    }
+
+    // Generic support for any enemy implementing TakeDamage.
+    if (body.IsInGroup("enemies") && body.HasMethod("TakeDamage"))
+    {
+        body.Call("TakeDamage", 1, this);
+        QueueFree();
+        return;
+    }
+
+    // World collision: bullet is consumed.
+    if (body is TileMapLayer)
+    {
+        QueueFree();
+        return;
+    }
+}
+```
 
 This gives immediate projectile gameplay while keeping future enemy support flexible.
 
@@ -144,6 +285,40 @@ In `Slime.cs`, when damage is received:
 * enemy group membership and collisions are disabled
 * a small flash + fade tween plays
 * `QueueFree()` runs at the end
+
+Real project excerpt (`Slime.cs`):
+
+```csharp
+public void TakeDamage(int amount, Node2D source = null)
+{
+    // 1) Prevent duplicate kill logic from repeated hits.
+    if (_dying)
+        return;
+    _dying = true;
+
+    // 2) Remove enemy from combat systems immediately.
+    RemoveFromGroup("enemies");
+    SetPhysicsProcess(false);
+    CollisionLayer = 0;
+    CollisionMask = 0;
+
+    // 3) Disable kill trigger so nothing else can interact during death.
+    var killZone = GetNodeOrNull<Area2D>("KillZone");
+    if (killZone != null)
+    {
+        killZone.SetDeferred(Area2D.PropertyName.Monitoring, false);
+        killZone.SetDeferred(Area2D.PropertyName.Monitorable, false);
+    }
+
+    // 4) Play death feedback (flash -> return -> fade out), then free node.
+    Color baseModulate = _animatedSprite.Modulate;
+    var tween = CreateTween();
+    tween.TweenProperty(_animatedSprite, "modulate", new Color(3f, 3f, 3f, baseModulate.A), DeathFlashInDuration);
+    tween.TweenProperty(_animatedSprite, "modulate", baseModulate, DeathFlashOutDuration);
+    tween.TweenProperty(_animatedSprite, "modulate", new Color(baseModulate.R, baseModulate.G, baseModulate.B, 0f), DeathFadeDuration);
+    tween.TweenCallback(Callable.From(QueueFree));
+}
+```
 
 So “kill effect” is not a single line. It is a controlled sequence:
 

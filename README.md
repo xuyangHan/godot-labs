@@ -13,6 +13,44 @@ The goal of this project is to:
 
 ---
 
+## Blog Series
+
+Alongside development, I write a series of technical articles about **game system design**. 
+
+### Posts
+
+1. **[Introduction to Godot](blogs/01-introduction-to-godot.md)** – Project setup, scenes, nodes, `_Ready()`, `GetNode`, and how the main script ties everything together.
+
+2. **[From game logic to the screen](blogs/02-logic-to-screen-signals-scenes-input.md)** – Separating Board/Piece from UI, PackedScene/Instantiate, signals, input (`_GuiInput`), and optional threading (`CallDeferred`).
+
+3. **[From Input to Playable Loop](blogs/03-2d-platform-core-loop-godot-csharp.md)** – Building a beginner 2D platformer loop in Godot C#: movement, jumping, animation states, coin pickup, death flow, and restart.
+
+4. **[Collision, Reusability, and Polish](blogs/04-2d-platform-collisions-reusability-polish.md)** – Collision layers/masks, reusable scenes, patrol AI with `RayCast2D`, animation-driven gameplay events, and beginner-safe polish.
+
+5. **[From Platformer to RPG](blogs/05-2d-rpg-tiles-and-game-manager.md)** – Transitioning to top-down RPG design, tile workflow recap (without gravity), and `GameManager` architecture for health/coins with signal-based HUD updates.
+
+6. **[Weapon Systems in a 2D RPG](blogs/06-2d-rpg-weapons-collision-and-scalability.md)** – Scalable weapon architecture (`Weapon` base + melee/ranged implementations), weapon pivot aiming/cycling, and collision-to-damage-to-kill flow.
+
+### Series arc
+
+- **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (chess-based posts).
+- **Phase 2 (Applied gameplay):** Platformer essentials (core loop + systems thinking), then other game types.
+- **Phase 3 (In practice):** By game type – turn-based (e.g. Pokémon-style), action/real-time, then multiplayer (e.g. MOBA).
+
+---
+
+Topics for future posts may include:
+
+* Designing a turn-based combat system
+* Architecture of farming simulations
+* Managing game state and persistence
+* Real-time game loops vs request-response systems
+* Integrating real-world data into gameplay
+
+These posts aim to bridge **traditional software engineering and game development thinking**.
+
+---
+
 ## Why This Project Exists
 
 Many programming resources explain **how to use a game engine**, but fewer focus on **how games are designed as systems**.
@@ -98,40 +136,4 @@ Possible integrations later:
 * Apple HealthKit
 * Native iOS plugins
 * Cloud save or backend services
-
----
-
-## Blog Series
-
-Alongside development, I write a series of technical articles about **game system design**. Drafts for the fundamentals phase use the **chess game** as the teaching project.
-
-### Posts
-
-1. **[Introduction to Godot](blogs/01-introduction-to-godot.md)** – Project setup, scenes, nodes, `_Ready()`, `GetNode`, and how the main script ties everything together.
-
-2. **[From game logic to the screen](blogs/02-logic-to-screen-signals-scenes-input.md)** – Separating Board/Piece from UI, PackedScene/Instantiate, signals, input (`_GuiInput`), and optional threading (`CallDeferred`).
-
-3. **[From Input to Playable Loop](blogs/03-2d-platform-core-loop-godot-csharp.md)** – Building a beginner 2D platformer loop in Godot C#: movement, jumping, animation states, coin pickup, death flow, and restart.
-
-4. **[Collision, Reusability, and Polish](blogs/04-2d-platform-collisions-reusability-polish.md)** – Collision layers/masks, reusable scenes, patrol AI with `RayCast2D`, animation-driven gameplay events, and beginner-safe polish.
-
-### Series arc
-
-- **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (chess-based posts).
-- **Phase 2 (Applied gameplay):** Platformer essentials (core loop + systems thinking), then other game types.
-- **Phase 3 (In practice):** By game type – turn-based (e.g. Pokémon-style), action/real-time, then multiplayer (e.g. MOBA).
-
-The chess project illustrates turn-based state, move history, and clear separation of rules vs view, which will be referenced in the turn-based in-practice post.
-
----
-
-Topics for future posts may include:
-
-* Designing a turn-based combat system
-* Architecture of farming simulations
-* Managing game state and persistence
-* Real-time game loops vs request-response systems
-* Integrating real-world data into gameplay
-
-These posts aim to bridge **traditional software engineering and game development thinking**.
 
