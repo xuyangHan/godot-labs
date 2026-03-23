@@ -32,6 +32,8 @@ The full project used in this tutorial is available in the [project repository](
 In the platformer, movement included gravity and jumping.  
 The player was always either on the ground or in the air.
 
+![game screenshot](assets/top-down-rpg.png)
+
 ### 1.1 What this changes
 
 In this RPG, movement is much simpler.
@@ -100,6 +102,8 @@ For example:
 * the UI needs to display both  
 
 If each scene keeps its own values, things quickly become messy and hard to sync.
+
+![game-state](assets/game-state.png)
 
 ---
 

@@ -19,6 +19,8 @@ That means we want reusable weapon contracts, clean collision flow, and clear en
 
 The full project used in this tutorial is available in the [project repository](/games/2d-rpg/), so you can follow along with the same scenes and scripts.
 
+![game screenshot](assets/top-down-rpg.png)
+
 ---
 
 ## 1. From Collision Basics to Combat Interactions
@@ -154,6 +156,9 @@ So adding a new weapon usually means:
 
 No rewrite of player movement logic is required.
 
+
+![weapon_pivot](assets/weapon_pivot.png)
+
 ---
 
 ## 4. Melee Example: `WeaponSword` Hit Window
@@ -272,6 +277,9 @@ private void OnBodyEntered(Node2D body)
 ```
 
 This gives immediate projectile gameplay while keeping future enemy support flexible.
+
+
+![weapon_gun](assets/weapon_gun.png)
 
 ---
 
