@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://da85044cb7x4s" path="res://scripts/enemies/EnemySpawner.cs" id="4_spawn"]
 [ext_resource type="AudioStream" uid="uid://bg1s6jokaiq8e" path="res://assets/music/time_for_adventure.mp3" id="5_iywne"]
 [ext_resource type="PackedScene" uid="uid://cq8k3h7y8m1hu" path="res://scenes/hud.tscn" id="6_hud"]
+[ext_resource type="Script" path="res://scripts/HealthPackageSpawner.cs" id="7_health_spawn"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yqjtg"]
 distance = 9.0
@@ -303,6 +304,9 @@ tile_set = SubResource("TileSet_lbhrr")
 
 [node name="EnemySpawner" type="Node" parent="." unique_id=2091810541]
 script = ExtResource("4_spawn")
+
+[node name="HealthPackageSpawner" type="Node" parent="."]
+script = ExtResource("7_health_spawn")
 
 [node name="Players" parent="." unique_id=1350777622 instance=ExtResource("2_yqjtg")]
 position = Vector2(374, -36)

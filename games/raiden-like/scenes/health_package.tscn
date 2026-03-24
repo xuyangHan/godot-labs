@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://c6flwm15o5mb"]
+
+[ext_resource type="Texture2D" uid="uid://c3wvpv5yluohy" path="res://assets/Tiles/tile_0024.png" id="1_dwb75"]
+[ext_resource type="AudioStream" uid="uid://bup4gn8dby51d" path="res://assets/Sounds/power_up.wav" id="2_od1l0"]
+[ext_resource type="Script" path="res://scripts/HealthPackage.cs" id="3_pkg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_od1l0"]
+size = Vector2(20, 12)
+
+[node name="HealthPackage" type="Area2D" unique_id=2030423743]
+collision_layer = 0
+collision_mask = 1
+monitoring = true
+script = ExtResource("3_pkg")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=369325522]
+texture = ExtResource("1_dwb75")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1404766543]
+shape = SubResource("RectangleShape2D_od1l0")
+
+[node name="AddHealthSound" type="AudioStreamPlayer2D" parent="." unique_id=1423441642]
+stream = ExtResource("2_od1l0")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-18, -18, 36, 36)

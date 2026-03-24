@@ -48,4 +48,18 @@ public partial class GameManager : Node
 
 		return Health <= 0;
 	}
+
+	/// <returns><see langword="true"/> if any HP was restored (pickup consumed).</returns>
+	public bool AddHealth(int amount = 1)
+	{
+		if (amount <= 0 || Health >= _maxHealth)
+			return false;
+
+		int before = Health;
+		Health = Mathf.Min(_maxHealth, Health + amount);
+		if (Health != before)
+			EmitSignal(SignalName.HealthChanged, Health);
+
+		return Health != before;
+	}
 }
