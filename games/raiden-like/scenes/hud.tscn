@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://cq8k3h7y8m1hu"]
+
+[ext_resource type="Script" path="res://scripts/HUD.cs" id="1_hud"]
+[ext_resource type="FontFile" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
+
+[node name="HUD" type="CanvasLayer"]
+layer = 50
+script = ExtResource("1_hud")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_left = 15.0
+offset_top = 12.0
+offset_right = 183.0
+offset_bottom = 52.0
+
+[node name="Stats" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HealthLabel" type="Label" parent="MarginContainer/Stats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.99607843, 0.3137255, 0.3137255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.34901962)
+theme_override_fonts/font = ExtResource("2_font")
+text = "Health: 3"

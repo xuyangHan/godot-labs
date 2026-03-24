@@ -20,9 +20,9 @@ public partial class Players : CharacterBody2D
 	/// <summary>Min time between damage ticks from touching enemies (avoids physics jitter spam).</summary>
 	[Export] public float EnemyContactCooldownSeconds { get; set; } = 0.35f;
 
-	private int _health;
 	private float _fireCooldownRemaining;
 	private float _enemyContactCooldown;
+	private GameManager _gameManager;
 	private Area2D _hurtbox;
 	private AudioStreamPlayer2D _shootSfx;
 	private AudioStreamPlayer2D _hitSound;
@@ -36,7 +36,9 @@ public partial class Players : CharacterBody2D
 	public override void _Ready()
 	{
 		AddToGroup("player");
-		_health = MaxHealth;
+		_gameManager = GetNodeOrNull<GameManager>("/root/GameManager");
+		_gameManager?.SetMaxHealth(MaxHealth);
+		_gameManager?.ResetRun();
 		_shootSfx = GetNodeOrNull<AudioStreamPlayer2D>("ShootSfx");
 		_hitSound = GetNodeOrNull<AudioStreamPlayer2D>("HitSound");
 		_killSound = GetNodeOrNull<AudioStreamPlayer2D>("KillSound");
@@ -74,25 +76,27 @@ public partial class Players : CharacterBody2D
 
 	public void TakeDamage(int amount)
 	{
-		if (amount <= 0 || _health <= 0 || _isDying)
+		if (amount <= 0 || _isDying)
+			return;
+		if (_gameManager == null || _gameManager.Health <= 0)
 			return;
 
-		_health -= amount;
+		bool dead = _gameManager.TakeDamage(amount);
 
-		if (_health > 0)
+		if (!dead)
 		{
 			_hitSound?.Play();
 			_ = PlayHitFeedbackAsync();
 			return;
 		}
 
-		_health = 0;
 		StartDeathSequence();
 	}
 
 	private void OnDeathTimerTimeout()
 	{
 		Engine.TimeScale = 1.0f;
+		GetNodeOrNull<GameManager>("/root/GameManager")?.ResetRun();
 		GetTree().ReloadCurrentScene();
 	}
 

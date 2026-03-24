@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bel54s7ot2wie" path="res://scripts/BackgroundScroller.cs" id="3_hh4px"]
 [ext_resource type="Script" uid="uid://da85044cb7x4s" path="res://scripts/enemies/EnemySpawner.cs" id="4_spawn"]
 [ext_resource type="AudioStream" uid="uid://bg1s6jokaiq8e" path="res://assets/music/time_for_adventure.mp3" id="5_iywne"]
+[ext_resource type="PackedScene" uid="uid://cq8k3h7y8m1hu" path="res://scenes/hud.tscn" id="6_hud"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yqjtg"]
 distance = 9.0
@@ -305,6 +306,8 @@ script = ExtResource("4_spawn")
 
 [node name="Players" parent="." unique_id=1350777622 instance=ExtResource("2_yqjtg")]
 position = Vector2(374, -36)
+
+[node name="HUD" parent="." instance=ExtResource("6_hud")]
 
 [node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=522670551]
 stream = ExtResource("5_iywne")
