@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://blxgiwolfi471"]
+
+[ext_resource type="Texture2D" uid="uid://cny16ipajb57a" path="res://assets/Tiles/tile_0028.png" id="1_88x61"]
+[ext_resource type="Script" path="res://scripts/enemies/EnemyBase.cs" id="2_enemy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o2lwj"]
+size = Vector2(16, 16)
+
+[node name="Tank" type="CharacterBody2D" unique_id=1014779159]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("2_enemy")
+movement = 1
+move_speed = 45.0
+tank_ground_y = -16.0
+max_health = 4
+
+[node name="AnimatedSprite2D" type="Sprite2D" parent="." unique_id=1032274387]
+texture = ExtResource("1_88x61")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=691206764]
+shape = SubResource("RectangleShape2D_o2lwj")
