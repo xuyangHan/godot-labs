@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://ckwaun5hm3ic"]
+
+[ext_resource type="Texture2D" uid="uid://ckgdk82ggduj" path="res://assets/Tiles/tile_0000.png" id="1_mkf8s"]
+[ext_resource type="Script" path="res://scripts/Bullet.cs" id="2_bullet"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y25gk"]
+size = Vector2(8, 20)
+
+[node name="Bullet" type="Area2D" unique_id=1703649020]
+script = ExtResource("2_bullet")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1026574539]
+texture = ExtResource("1_mkf8s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=536716522]
+shape = SubResource("RectangleShape2D_y25gk")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=3847291051]
+rect = Rect2(-8, -14, 16, 28)
