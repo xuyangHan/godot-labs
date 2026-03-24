@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://cn2e1qr1o4kij"]
+
+[ext_resource type="Texture2D" uid="uid://ckgdk82ggduj" path="res://assets/Tiles/tile_0000.png" id="1_d2qol"]
+[ext_resource type="Script" uid="uid://wjw8880j8oj" path="res://scripts/enemies/EnemyBullet.cs" id="2_eb"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qx7rs"]
+radius = 1.0
+height = 6.0
+
+[node name="enemy_bullet" type="Area2D" unique_id=1199940904]
+collision_layer = 8
+script = ExtResource("2_eb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1657113634]
+modulate = Color(1, 0.33333334, 0.32156864, 0.9098039)
+self_modulate = Color(1.0845727, 1.0845727, 1.0845727, 1)
+position = Vector2(-3.5762787e-07, -4.7683716e-07)
+rotation = 3.1415927
+scale = Vector2(0.32572174, 0.40317488)
+texture = ExtResource("1_d2qol")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=157332456]
+shape = SubResource("CapsuleShape2D_qx7rs")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1488460336]

@@ -11,6 +11,8 @@ public static class GameCollisionLayers
 
 public partial class EnemyBase : CharacterBody2D
 {
+	private static readonly PackedScene EnemyBulletScene = GD.Load<PackedScene>("res://scenes/enemy_bullet.tscn");
+
 	public enum MovementKind { Plane, Tank }
 
 	[Export] public MovementKind Movement { get; set; } = MovementKind.Plane;
@@ -24,13 +26,27 @@ public partial class EnemyBase : CharacterBody2D
 
 	[Export] public int MaxHealth { get; set; } = 2;
 
+	[ExportGroup("Weapon")]
+	[Export] public float FireCooldownSeconds { get; set; } = 1.35f;
+
+	[Export] public float FireCooldownJitter { get; set; } = 0.45f;
+
+	/// <summary>Half-angle (radians) around <see cref="Vector2.Down"/> for random aim.</summary>
+	[Export] public float FireSpreadHalfAngleRadians { get; set; } = 0.55f;
+
+	[Export] public Vector2 BulletSpawnOffset { get; set; } = new Vector2(0f, 18f);
+
+	[Export] public float BulletSpeed { get; set; } = 240f;
+
 	private int _health;
+	private float _fireCooldownRemaining;
 
 	public override void _Ready()
 	{
 		AddToGroup("enemies");
 		_health = MaxHealth;
 		CollisionLayer = GameCollisionLayers.Enemy;
+		ResetFireCooldown();
 	}
 
 	public void TakeDamage(int amount)
@@ -54,5 +70,41 @@ public partial class EnemyBase : CharacterBody2D
 				GlobalPosition = new Vector2(GlobalPosition.X, TankGroundY);
 				break;
 		}
+
+		float dt = (float)delta;
+		_fireCooldownRemaining -= dt;
+		if (_fireCooldownRemaining <= 0f)
+		{
+			TryFireEnemyBullet();
+			ResetFireCooldown();
+		}
+	}
+
+	private void ResetFireCooldown()
+	{
+		float jitter = FireCooldownJitter > 0f
+			? (float)GD.RandRange(-FireCooldownJitter, FireCooldownJitter)
+			: 0f;
+		_fireCooldownRemaining = Mathf.Max(0.05f, FireCooldownSeconds + jitter);
+	}
+
+	private void TryFireEnemyBullet()
+	{
+		if (EnemyBulletScene == null)
+			return;
+
+		Node world = GetParent();
+		if (world == null)
+			return;
+
+		float spread = FireSpreadHalfAngleRadians;
+		float angle = spread > 0f ? (float)GD.RandRange(-spread, spread) : 0f;
+		Vector2 dir = Vector2.Down.Rotated(angle);
+
+		var bullet = EnemyBulletScene.Instantiate<EnemyBullet>();
+		bullet.Direction = dir;
+		bullet.Speed = BulletSpeed;
+		world.AddChild(bullet);
+		bullet.GlobalPosition = GlobalPosition + BulletSpawnOffset;
 	}
 }
