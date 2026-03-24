@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://bgfb0c1co263x"]
+
+[ext_resource type="Texture2D" uid="uid://docsd5tk1d4en" path="res://assets/Tilemap/ships_packed.png" id="1_1l16o"]
+[ext_resource type="Script" uid="uid://f6om0b7wrp2g" path="res://scripts/Players.cs" id="1_q2hk0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q2hk0"]
+atlas = ExtResource("1_1l16o")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j4k85"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q2hk0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k38wr"]
+
+[node name="Players" type="CharacterBody2D" unique_id=1350777622]
+script = ExtResource("1_q2hk0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=593227028]
+sprite_frames = SubResource("SpriteFrames_j4k85")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=277763314]
+zoom = Vector2(2, 2)
+limit_left = 0
+limit_top = -350
+limit_right = 830
+limit_bottom = 0
+position_smoothing_enabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=883150274]
+shape = SubResource("CircleShape2D_k38wr")
