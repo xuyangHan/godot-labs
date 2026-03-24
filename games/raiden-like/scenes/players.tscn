@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://f6om0b7wrp2g" path="res://scripts/Players.cs" id="1_q2hk0"]
 [ext_resource type="Texture2D" uid="uid://cvj3q1hbps2jt" path="res://assets/Ships/ship_0000.png" id="2_j4k85"]
 [ext_resource type="Texture2D" uid="uid://8nfytn83riyl" path="res://assets/Ships/ship_0012.png" id="3_k38wr"]
+[ext_resource type="AudioStream" uid="uid://c7wq1p5ptep7" path="res://assets/Sounds/shoot-d.ogg" id="4_k38wr"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k38wr"]
 
@@ -28,3 +29,7 @@ modulate = Color(0, 0, 0, 0.2)
 position = Vector2(-31, 23)
 scale = Vector2(0.75, 0.719)
 texture = ExtResource("3_k38wr")
+
+[node name="ShootSfx" type="AudioStreamPlayer2D" parent="." unique_id=1354170052]
+stream = ExtResource("4_k38wr")
+volume_db = -10.0

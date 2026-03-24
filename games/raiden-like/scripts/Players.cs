@@ -12,6 +12,12 @@ public partial class Players : CharacterBody2D
 	[Export] public Vector2 BulletSpawnOffset { get; set; } = new Vector2(0f, -28f);
 
 	private float _fireCooldownRemaining;
+	private AudioStreamPlayer2D _shootSfx;
+
+	public override void _Ready()
+	{
+		_shootSfx = GetNodeOrNull<AudioStreamPlayer2D>("ShootSfx");
+	}
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -36,6 +42,8 @@ public partial class Players : CharacterBody2D
 		var world = GetParent();
 		if (world == null || BulletScene == null)
 			return;
+
+		_shootSfx?.Play();
 
 		var bullet = BulletScene.Instantiate<Node2D>();
 		world.AddChild(bullet);
