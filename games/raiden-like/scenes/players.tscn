@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://cvj3q1hbps2jt" path="res://assets/Ships/ship_0000.png" id="2_j4k85"]
 [ext_resource type="Texture2D" uid="uid://8nfytn83riyl" path="res://assets/Ships/ship_0012.png" id="3_k38wr"]
 [ext_resource type="AudioStream" uid="uid://c7wq1p5ptep7" path="res://assets/Sounds/shoot-d.ogg" id="4_k38wr"]
+[ext_resource type="AudioStream" path="res://assets/Sounds/lose-a.ogg" id="5_die"]
+[ext_resource type="AudioStream" path="res://assets/Sounds/hurt.wav" id="6_hit"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k38wr"]
 
@@ -24,6 +26,14 @@ position_smoothing_enabled = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=883150274]
 shape = SubResource("CircleShape2D_k38wr")
 
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_k38wr")
+
 [node name="shadow" type="Sprite2D" parent="." unique_id=1187687249]
 modulate = Color(0, 0, 0, 0.2)
 position = Vector2(-31, 23)
@@ -33,3 +43,26 @@ texture = ExtResource("3_k38wr")
 [node name="ShootSfx" type="AudioStreamPlayer2D" parent="." unique_id=1354170052]
 stream = ExtResource("4_k38wr")
 volume_db = -10.0
+
+[node name="DeathTimer" type="Timer" parent="."]
+wait_time = 0.479
+one_shot = true
+
+[node name="FxLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="DamageOverlay" type="ColorRect" parent="FxLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="KillSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_die")
+
+[node name="HitSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_hit")

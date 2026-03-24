@@ -11,6 +11,10 @@ public static class GameCollisionLayers
 
 public partial class EnemyBase : CharacterBody2D
 {
+	private const float DeathFlashInDuration = 0.05f;
+	private const float DeathFlashOutDuration = 0.1f;
+	private const float DeathFadeDuration = 0.5f;
+
 	private static readonly PackedScene EnemyBulletScene = GD.Load<PackedScene>("res://scenes/enemy_bullet.tscn");
 
 	public enum MovementKind { Plane, Tank }
@@ -40,20 +44,76 @@ public partial class EnemyBase : CharacterBody2D
 
 	private int _health;
 	private float _fireCooldownRemaining;
+	private bool _dying;
+	private CanvasItem _deathVisual;
 
 	public override void _Ready()
 	{
 		AddToGroup("enemies");
 		_health = MaxHealth;
 		CollisionLayer = GameCollisionLayers.Enemy;
+		_deathVisual = FindDeathVisualSprite();
 		ResetFireCooldown();
 	}
 
 	public void TakeDamage(int amount)
 	{
+		if (_dying || amount <= 0)
+			return;
+
 		_health -= amount;
-		if (_health <= 0)
+		if (_health > 0)
+			return;
+
+		_health = 0;
+		BeginDeathSequence();
+	}
+
+	private CanvasItem FindDeathVisualSprite()
+	{
+		foreach (Node n in GetChildren())
+		{
+			if (n.Name == "shadow")
+				continue;
+			if (n is Sprite2D s)
+				return s;
+			if (n is AnimatedSprite2D a)
+				return a;
+		}
+
+		return null;
+	}
+
+	private void BeginDeathSequence()
+	{
+		if (_dying)
+			return;
+		_dying = true;
+
+		RemoveFromGroup("enemies");
+		SetPhysicsProcess(false);
+		CollisionLayer = 0;
+		CollisionMask = 0;
+
+		CanvasItem visual = _deathVisual ?? FindDeathVisualSprite();
+		if (visual == null)
+		{
 			QueueFree();
+			return;
+		}
+
+		Color baseModulate = visual.Modulate;
+		Tween tween = CreateTween();
+		tween.TweenProperty(visual, "modulate", new Color(3f, 3f, 3f, baseModulate.A), DeathFlashInDuration)
+			.SetTrans(Tween.TransitionType.Quad)
+			.SetEase(Tween.EaseType.Out);
+		tween.TweenProperty(visual, "modulate", baseModulate, DeathFlashOutDuration)
+			.SetTrans(Tween.TransitionType.Quad)
+			.SetEase(Tween.EaseType.InOut);
+		tween.TweenProperty(visual, "modulate", new Color(baseModulate.R, baseModulate.G, baseModulate.B, 0f), DeathFadeDuration)
+			.SetTrans(Tween.TransitionType.Sine)
+			.SetEase(Tween.EaseType.In);
+		tween.TweenCallback(Callable.From(QueueFree));
 	}
 
 	public override void _PhysicsProcess(double delta)
