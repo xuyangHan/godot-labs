@@ -31,6 +31,10 @@ Alongside development, I write a series of technical articles about **game syste
 
 6. **[Weapon Systems in a 2D RPG](blogs/06-2d-rpg-weapons-collision-and-scalability.md)** – Scalable weapon architecture (`Weapon` base + melee/ranged implementations), weapon pivot aiming/cycling, and collision-to-damage-to-kill flow.
 
+7. **[From RPG to Scrolling Shooter](blogs/07-raiden-like-scrolling-shooter-reuse-and-scrolling.md)** – Reusing tiles + `GameManager` + HUD patterns in a new genre, and implementing an infinite scrolling background with a looping `TileMapLayer`.
+
+8. **[Enemies in a Scrolling Shooter](blogs/08-raiden-like-enemies-spawning-bullets-and-pickups.md)** – Enemy variants via exported properties, auto-spawning with a difficulty ramp, downward bullets, player damage flow, and pickup spawning connected back to `GameManager`.
+
 ### Series arc
 
 - **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (chess-based posts).
