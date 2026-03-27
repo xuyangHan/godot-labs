@@ -13,242 +13,229 @@ Now we build the systems that create “pressure” in a shooter:
 
 The full project used in this tutorial is available in the [project repository](/games/raiden-like/), so you can follow along with the same scenes and scripts.
 
----
-
-## 1. Enemy design goal: different behavior, shared structure
-
-Beginner projects often start with one enemy scene.
-Then you add a second enemy… and duplicate everything.
-
-Instead, we aim for:
-
-> Many enemy *variants* that share one readable base implementation.
-
-In `raiden-like`, enemies are instances of different `.tscn` scenes (`plane_1`, `plane_2`, …), but they all use the same script base: `EnemyBase`.
-
-That gives us a consistent place to put:
-
-- movement rules
-- health / damage handling
-- bullet firing behavior
-- death feedback and cleanup
+![game screenshot](assets/raiden-game.png)
 
 ---
 
-## 2. `EnemyBase`: movement + shooting + death in one place
+## 1. Enemy Design Goal: Different Behavior, Same Structure
 
-### 2.1 The properties that make “types”
+In beginner projects, it’s very common to start like this:
 
-If all enemy scenes share the same script, how do they feel different?
+* create one enemy
+* duplicate it to make a second one
+* copy and tweak code
 
-By using exported properties.
+This works at first… but quickly becomes hard to manage.
 
-In `EnemyBase`, you can tune:
+Instead, we aim for a cleaner idea:
 
-- movement mode (`Plane` vs `Tank`)
-- move speed and horizontal drift
-- max health
-- fire rate + randomness
-- bullet speed + spread
+> Different enemies should *feel different*, but be built from the same structure.
 
-```12:170:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\enemies\EnemyBase.cs
-public partial class EnemyBase : CharacterBody2D
+In this project:
+
+* each enemy is its own scene (`plane_1`, `plane_2`, etc.)
+* but they all share the same script: `EnemyBase`
+
+This gives us one place to handle:
+
+* movement
+* health and damage
+* shooting
+* death and cleanup
+
+So instead of copying logic, we reuse it and just tweak values.
+
+---
+
+## 2. `EnemyBase`: One Script, Many Enemy Types
+
+### 2.1 Use Properties to Create Variety
+
+If all enemies share one script, how do they behave differently?
+
+The answer is simple:
+
+> We change values, not code.
+
+In `EnemyBase`, we expose properties in the inspector:
+
+* movement type (`Plane` or `Tank`)
+* movement speed and drift
+* health
+* fire rate
+* bullet speed and spread
+
+```csharp
+[Export] public MovementKind Movement { get; set; } = MovementKind.Plane;
+[Export] public float MoveSpeed { get; set; } = 72f;
+[Export] public float PlaneDriftX { get; set; } = 0f;
+[Export] public int MaxHealth { get; set; } = 2;
+
+[Export] public float FireCooldownSeconds { get; set; } = 1.35f;
+[Export] public float FireSpreadHalfAngleRadians { get; set; } = 0.55f;
+[Export] public float BulletSpeed { get; set; } = 240f;
+```
+
+This gives you a very beginner-friendly workflow:
+
+* duplicate a scene
+* tweak a few numbers
+* instantly get a new enemy type
+
+No new script needed.
+
+---
+
+### 2.2 Simple Movement That Feels Right
+
+For a shooter, movement does not need to be complex.
+
+It just needs to be:
+
+* predictable
+* readable
+* consistent
+
+In `_PhysicsProcess`, enemies move based on their type:
+
+* **planes** move downward (with optional sideways drift)
+* **tanks** move sideways but stay on a fixed “ground” line
+
+```csharp
+switch (Movement)
 {
-	private static readonly PackedScene EnemyBulletScene = GD.Load<PackedScene>("res://scenes/enemy_bullet.tscn");
+    case MovementKind.Plane:
+        Velocity = new Vector2(PlaneDriftX, MoveSpeed);
+        MoveAndSlide();
+        break;
 
-	public enum MovementKind { Plane, Tank }
-
-	[Export] public MovementKind Movement { get; set; } = MovementKind.Plane;
-
-	/// <summary>Along +X for tanks; drift for planes while <see cref="MoveSpeed"/> drives +Y.</summary>
-	[Export] public float MoveSpeed { get; set; } = 72f;
-
-	[Export] public float PlaneDriftX { get; set; } = 0f;
-
-	[Export] public float TankGroundY { get; set; } = -20f;
-
-	[Export] public int MaxHealth { get; set; } = 2;
-
-	[ExportGroup("Weapon")]
-	[Export] public float FireCooldownSeconds { get; set; } = 1.35f;
-	[Export] public float FireCooldownJitter { get; set; } = 0.45f;
-
-	/// <summary>Half-angle (radians) around <see cref="Vector2.Down"/> for random aim.</summary>
-	[Export] public float FireSpreadHalfAngleRadians { get; set; } = 0.55f;
-
-	[Export] public Vector2 BulletSpawnOffset { get; set; } = new Vector2(0f, 18f);
-	[Export] public float BulletSpeed { get; set; } = 240f;
-	// ...
+    case MovementKind.Tank:
+        Velocity = new Vector2(MoveSpeed, 0f);
+        MoveAndSlide();
+        GlobalPosition = new Vector2(GlobalPosition.X, TankGroundY);
+        break;
 }
 ```
 
-That one design decision keeps things beginner-friendly:
+This creates a clear and simple loop:
 
-- you can create new enemies mostly by tweaking inspector values
-- you don’t need to fork a new script for every enemy variant
+* enemies enter the screen
+* move in a predictable way
+* create pressure
+* leave or get destroyed
+
+That’s all you need for a solid beginner shooter.
 
 ---
 
-### 2.2 A simple movement model for a shooter
+### 2.3 Shooting Downward (With a Bit of Chaos)
 
-For early shooter prototypes, movement does not need pathfinding or steering.
-It just needs to be consistent and readable.
+A core idea in many shooters is:
 
-In `_PhysicsProcess`, the enemy chooses movement based on `MovementKind`:
+> Bullets mostly go down… but not perfectly straight.
 
-- planes move downward (with optional drift)
-- tanks move horizontally but clamp their Y to a ground lane
+This keeps gameplay fair but not boring.
 
-```119:141:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\enemies\EnemyBase.cs
-public override void _PhysicsProcess(double delta)
+In `EnemyBase`, bullets are aimed downward with a small random angle:
+
+```csharp
+float angle = (float)GD.RandRange(-spread, spread);
+Vector2 dir = Vector2.Down.Rotated(angle);
+```
+
+Then we spawn and launch the bullet:
+
+```csharp
+bullet.Direction = dir;
+bullet.Speed = BulletSpeed;
+```
+
+You can control difficulty using just a few values:
+
+* **FireCooldownSeconds** → how often enemies shoot
+* **FireSpread** → how accurate (or messy) shots are
+* **BulletSpeed** → how much time the player has to react
+
+These small tweaks make a big difference in how the game feels.
+
+---
+
+### 2.4 Collision: Turning Bullets into Damage
+
+The enemy bullet is a small, focused script:
+
+* it moves every frame
+* it checks collision with the player
+* it applies damage
+* it removes itself
+
+```csharp
+private void OnBodyEntered(Node2D body)
 {
-	switch (Movement)
-	{
-		case MovementKind.Plane:
-			Velocity = new Vector2(PlaneDriftX, MoveSpeed);
-			MoveAndSlide();
-			break;
-		case MovementKind.Tank:
-			Velocity = new Vector2(MoveSpeed, 0f);
-			MoveAndSlide();
-			GlobalPosition = new Vector2(GlobalPosition.X, TankGroundY);
-			break;
-	}
-
-	float dt = (float)delta;
-	_fireCooldownRemaining -= dt;
-	if (_fireCooldownRemaining <= 0f)
-	{
-		TryFireEnemyBullet();
-		ResetFireCooldown();
-	}
+    if (body is Players player)
+    {
+        player.TakeDamage(Damage);
+        QueueFree();
+    }
 }
 ```
 
-This is a good beginner baseline because it creates a clear gameplay loop:
+So the flow is very clear:
 
-- enemy enters from above
-- enemy travels into the play space
-- enemy occasionally fires
-- enemy leaves or gets destroyed
-
----
-
-### 2.3 Shooting downward: “always dangerous, sometimes unpredictable”
-
-Most classic shooters are built around a simple idea:
-
-> Enemy bullets mostly travel down, but not always straight down.
-
-`EnemyBase` implements this by aiming around `Vector2.Down` with a randomized spread angle.
-
-```143:169:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\enemies\EnemyBase.cs
-private void TryFireEnemyBullet()
-{
-	if (EnemyBulletScene == null)
-		return;
-
-	Node world = GetParent();
-	if (world == null)
-		return;
-
-	float spread = FireSpreadHalfAngleRadians;
-	float angle = spread > 0f ? (float)GD.RandRange(-spread, spread) : 0f;
-	Vector2 dir = Vector2.Down.Rotated(angle);
-
-	var bullet = EnemyBulletScene.Instantiate<EnemyBullet>();
-	bullet.Direction = dir;
-	bullet.Speed = BulletSpeed;
-	world.AddChild(bullet);
-	bullet.GlobalPosition = GlobalPosition + BulletSpawnOffset;
-}
+```text
+bullet moves
+    ↓
+hits player
+    ↓
+player takes damage
+    ↓
+bullet disappears
 ```
 
-Beginner takeaway:
+This is the same idea you’ve used before:
 
-- **`FireCooldownSeconds`** controls *how often* enemies shoot
-- **`FireSpreadHalfAngleRadians`** controls *how avoidable* the bullets are
-- **`BulletSpeed`** controls the player reaction time
+> collision → gameplay effect
 
-Those three knobs alone can create many “difficulty feels”.
+Just applied to a faster, more action-heavy game.
 
 ---
 
-### 2.4 Collision: enemy bullets hit player health
-
-The enemy bullet itself is a small script:
-
-- it moves each physics frame in its assigned direction
-- it damages the player if it overlaps the player node
-- it despawns when it leaves the screen
-
-```3:33:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\enemies\EnemyBullet.cs
-public partial class EnemyBullet : Area2D
-{
-	[Export] public float Speed { get; set; } = 240f;
-	[Export] public int Damage { get; set; } = 1;
-
-	/// <summary>World-space travel direction (normalized automatically).</summary>
-	public Vector2 Direction { get; set; } = Vector2.Down;
-
-	public override void _Ready()
-	{
-		var notifier = GetNode<VisibleOnScreenNotifier2D>("VisibleOnScreenNotifier2D");
-		notifier.ScreenExited += QueueFree;
-		BodyEntered += OnBodyEntered;
-	}
-
-	private void OnBodyEntered(Node2D body)
-	{
-		if (body is Players player)
-		{
-			player.TakeDamage(Damage);
-			QueueFree();
-		}
-	}
-
-	public override void _PhysicsProcess(double delta)
-	{
-		Vector2 dir = Direction.LengthSquared() > 0.0001f ? Direction.Normalized() : Vector2.Down;
-		GlobalPosition += dir * Speed * (float)delta;
-	}
-}
-```
-
-This is the clean “collision → gameplay” pattern from earlier posts, just adapted for shooter bullets.
-
----
-
-## 3. Automatic spawning: enemies should not be hand-placed
+## 3. Automatic Spawning: Let the Game Create Pressure
 
 If you place enemies manually in the editor:
 
-- the stage never changes
-- replayability is low
-- “difficulty ramp” is hard to tune
+* the level always plays the same
+* replay value is low
+* it’s hard to control difficulty over time
 
-So we spawn enemies automatically above the camera.
+So instead, we let the game **spawn enemies continuously**.
 
-### 3.1 The spawn loop in one sentence
-
-The spawner:
-
-- counts down a timer
-- instantiates a random enemy scene
-- places it just above the visible top edge
-- repeats faster over time
+> Enemies should *enter the screen*, not sit there waiting.
 
 ---
 
-### 3.2 `EnemySpawner`: weighted random + exponential ramp
+### 3.1 The Spawn Loop (Simple Mental Model)
 
-The enemy spawner uses three key ideas:
+The spawner follows a very simple loop:
 
-- **spawn interval shrinks over time** using an exponential curve
-- **multiple enemy scenes** can be assigned in the inspector
-- **weights** allow some enemies to appear more often than others
+* wait for a short delay
+* pick a random enemy
+* spawn it just above the screen
+* repeat… a bit faster each time
 
-```4:144:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\enemies\EnemySpawner.cs
+That’s enough to create a constantly changing challenge.
+
+---
+
+### 3.2 `EnemySpawner`: Making Difficulty Increase Over Time
+
+The spawner uses three simple ideas:
+
+* **spawn faster over time**
+* **choose from multiple enemy types**
+* **control how often each type appears**
+
+```csharp
 public partial class EnemySpawner : Node
 {
 	[ExportGroup("Difficulty")]
@@ -297,21 +284,79 @@ public partial class EnemySpawner : Node
 }
 ```
 
-Beginner-friendly tuning:
+What these mean in plain terms:
 
-- if the game feels too slow early, reduce `BaseSpawnInterval`
-- if it becomes unfair too quickly, reduce `RampPerSecond`
-- if it becomes unfair eventually, increase `MinSpawnInterval`
+* **BaseSpawnInterval** → how slow the game starts
+* **MinSpawnInterval** → the fastest it can ever get
+* **RampPerSecond** → how quickly it speeds up
+
+So the flow becomes:
+
+```text
+start slow
+   ↓
+spawn faster over time
+   ↓
+eventually stabilize at a fast pace
+```
+
+You don’t need to fully understand the math here—the important idea is:
+
+> The game gets harder automatically as time passes.
 
 ---
 
-### 3.3 Spawning above the camera (so enemies “enter” naturally)
+### 3.3 Controlling Enemy Variety (Weighted Random)
 
-One subtle detail: spawn position is computed from the active camera + viewport.
+Instead of always spawning the same enemy, we pick from a list:
 
-That keeps spawning robust if you change resolution or camera zoom, because the spawner is using *what the player can currently see*.
+```csharp
+[Export] public Array<PackedScene> EnemyScenes { get; set; }
+[Export] public Array<float> SpawnWeights { get; set; }
+```
 
-```125:142:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\enemies\EnemySpawner.cs
+
+Weights let you control how often each enemy appears:
+
+* higher weight → appears more often
+* lower weight → appears less often
+
+Example:
+
+* basic enemy → weight 5
+* stronger enemy → weight 2
+* rare enemy → weight 1
+
+This keeps the game interesting without adding complex logic.
+
+---
+
+### 3.4 Tuning Tips (What to Adjust First)
+
+If something feels off, start here:
+
+* game too slow at the start → lower **BaseSpawnInterval**
+* difficulty ramps too quickly → lower **RampPerSecond**
+* late game feels unfair → increase **MinSpawnInterval**
+
+These three values give you a lot of control without touching code.
+
+---
+
+### 3.5 Spawning Just Above the Screen
+
+One small but important detail:
+
+> Enemies should appear *outside* the screen, then move in.
+
+So we spawn them slightly above the visible area.
+
+The position is calculated using:
+
+* the camera position
+* the current screen size
+
+```csharp
 private Vector2 ComputeSpawnPosition(Camera2D cam, Viewport viewport)
 {
 	Vector2 vsize = viewport.GetVisibleRect().Size;
@@ -332,7 +377,22 @@ private Vector2 ComputeSpawnPosition(Camera2D cam, Viewport viewport)
 }
 ```
 
-So enemies appear from just above the top edge, which looks natural in a vertical scroller.
+This makes sure:
+
+* enemies always enter from the top
+* spawning still works if you change resolution or zoom
+
+So visually, it feels like:
+
+```text
+enemy appears above
+    ↓
+moves into view
+    ↓
+interacts with player
+```
+
+That small detail makes the game feel much more natural.
 
 ---
 
@@ -351,7 +411,7 @@ That feels unfair and it’s confusing to debug.
 
 So `Players` includes `EnemyContactCooldownSeconds` and a simple timer check:
 
-```66:75:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\Players.cs
+``` csharp
 private void OnHurtboxBodyEntered(Node2D body)
 {
 	if (_isDying || body is not EnemyBase)
@@ -374,7 +434,7 @@ The player does not own the “real” health value.
 
 The player asks `GameManager` to reduce health, and the HUD reacts via the `HealthChanged` signal (from Part 7).
 
-```77:94:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\Players.cs
+```csharp
 public void TakeDamage(int amount)
 {
 	if (amount <= 0 || _isDying)
@@ -421,7 +481,7 @@ In this project, health packages spawn above the camera on a **separate, slower 
 - spawn above the top edge
 - instantiate a scene and add it to the world
 
-```3:82:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\HealthPackageSpawner.cs
+```csharp
 public partial class HealthPackageSpawner : Node
 {
 	private static readonly PackedScene DefaultPackageScene = GD.Load<PackedScene>("res://scenes/health_package.tscn");
@@ -483,7 +543,7 @@ The important part is the integration point:
 
 > Pickups don’t update UI directly. They call `GameManager`, and the HUD reacts.
 
-```4:80:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\HealthPackage.cs
+```csharp
 public partial class HealthPackage : Area2D
 {
 	[Export] public int HealAmount { get; set; } = 1;

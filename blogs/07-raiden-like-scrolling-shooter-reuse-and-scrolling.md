@@ -68,64 +68,79 @@ In `raiden-like`, `GameManager` stays small and focused: it owns `Coins`, `Healt
 ```
 public partial class GameManager : Node
 {
+	// UI systems subscribe to this to refresh the coin text.
 	[Signal]
 	public delegate void CoinsChangedEventHandler(int newValue);
 
+	// UI systems subscribe to this to refresh the HP text.
 	[Signal]
 	public delegate void HealthChangedEventHandler(int newValue);
 
+	// Backing field so we can enforce a minimum valid max HP.
 	private int _maxHealth = 3;
 
 	/// <summary>Current run max HP (set from player export before <see cref="ResetRun"/>).</summary>
 	public int MaxHealth => _maxHealth;
 
+	// Current run values owned by this singleton manager.
 	public int Coins { get; private set; }
 	public int Health { get; private set; } = 3;
 
 	public void SetMaxHealth(int max)
 	{
+		// Never allow max HP below 1.
 		_maxHealth = Mathf.Max(1, max);
 	}
 
 	public void AddCoin(int amount = 1)
 	{
+		// Ignore invalid coin rewards.
 		if (amount <= 0)
 			return;
 
 		Coins += amount;
+		// Push updates to listeners (HUD, etc.).
 		EmitSignal(SignalName.CoinsChanged, Coins);
 	}
 
 	public void ResetRun()
 	{
+		// Start each run from clean state.
 		Coins = 0;
 		Health = _maxHealth;
+		// Emit both so the HUD is immediately in sync.
 		EmitSignal(SignalName.CoinsChanged, Coins);
 		EmitSignal(SignalName.HealthChanged, Health);
 	}
 
 	public bool TakeDamage(int amount = 1)
 	{
+		// Ignore invalid damage; if already dead, keep returning true.
 		if (amount <= 0 || Health <= 0)
 			return Health <= 0;
 
+		// Clamp to 0 so HP never goes negative.
 		Health = Mathf.Max(0, Health - amount);
 		EmitSignal(SignalName.HealthChanged, Health);
 
+		// Caller can react to death in one line.
 		return Health <= 0;
 	}
 
 	/// <returns><see langword="true"/> if any HP was restored (pickup consumed).</returns>
 	public bool AddHealth(int amount = 1)
 	{
+		// No-op if invalid amount or already full HP.
 		if (amount <= 0 || Health >= _maxHealth)
 			return false;
 
 		int before = Health;
+		// Clamp to max HP so overheal is not possible.
 		Health = Mathf.Min(_maxHealth, Health + amount);
 		if (Health != before)
 			EmitSignal(SignalName.HealthChanged, Health);
 
+		// Return whether the pickup had any effect.
 		return Health != before;
 	}
 }
@@ -142,26 +157,33 @@ The HUD does not chase game objects to “pull” values. It simply listens to `
 ```
 public partial class HUD : CanvasLayer
 {
+	// Cached references to label nodes for fast updates.
 	private Label _coinLabel;
 	private Label _healthLabel;
 
 	public override void _Ready()
 	{
+		// Coin label is optional in some HUD variants.
 		_coinLabel = GetNodeOrNull<Label>("MarginContainer/Stats/CoinLabel");
+		// Health label is required in this scene.
 		_healthLabel = GetNode<Label>("MarginContainer/Stats/HealthLabel");
 
+		// Read from autoload singleton rather than gameplay scene nodes.
 		GameManager gameManager = GetNodeOrNull<GameManager>("/root/GameManager");
 		if (gameManager != null)
 		{
+			// Subscribe so HUD reacts whenever values change.
 			if (_coinLabel != null)
 				gameManager.CoinsChanged += OnCoinsChanged;
 			gameManager.HealthChanged += OnHealthChanged;
+			// Push current values immediately (no waiting for next signal).
 			if (_coinLabel != null)
 				OnCoinsChanged(gameManager.Coins);
 			OnHealthChanged(gameManager.Health);
 		}
 		else
 		{
+			// Safe fallback values when GameManager is unavailable.
 			if (_coinLabel != null)
 				_coinLabel.Text = "Coins: 0";
 			_healthLabel.Text = "Health: 3";
@@ -170,6 +192,7 @@ public partial class HUD : CanvasLayer
 
 	public override void _ExitTree()
 	{
+		// Always unsubscribe to avoid stale callbacks after scene changes.
 		GameManager gameManager = GetNodeOrNull<GameManager>("/root/GameManager");
 		if (gameManager != null)
 		{
@@ -181,12 +204,14 @@ public partial class HUD : CanvasLayer
 
 	private void OnCoinsChanged(int newValue)
 	{
+		// Defensive check because coin label is optional.
 		if (_coinLabel != null)
 			_coinLabel.Text = $"Coins: {newValue}";
 	}
 
 	private void OnHealthChanged(int newValue)
 	{
+		// Health label is required, so update directly.
 		_healthLabel.Text = $"Health: {newValue}";
 	}
 }
@@ -246,16 +271,21 @@ Here is the full implementation:
 public partial class BackgroundScroller : TileMapLayer
 {
 	[Export]
+	// Pixels per second moving downward.
 	public float ScrollSpeed = 80.0f;
 
+	// Height of one tile pattern in pixels.
 	private float _patternHeightPixels;
+	// Runtime clone used to create seamless looping.
 	private TileMapLayer _secondaryLayer;
+	// Y positions tracked manually for precise wrap logic.
 	private float _primaryY;
 	private float _secondaryY;
 	private bool _isInitialized;
 
 	public override void _Ready()
 	{
+		// Compute total pixel height from used tile rows.
 		Rect2I usedRect = GetUsedRect();
 		Vector2I usedRectSize = usedRect.Size;
 		Vector2I tileSize = TileSet.TileSize;
@@ -263,15 +293,18 @@ public partial class BackgroundScroller : TileMapLayer
 
 		if (_patternHeightPixels <= 0.0f)
 		{
+			// If pattern has no height, looping cannot work.
 			GD.PushWarning($"{Name}: Background pattern height is zero. Scrolling disabled.");
 			return;
 		}
 
+		// Duplicate setup is deferred so the scene tree is fully ready.
 		CallDeferred(nameof(SetupSecondaryLayerDeferred));
 	}
 
 	private void SetupSecondaryLayerDeferred()
 	{
+		// Clone visual data so both layers render the same pattern.
 		_secondaryLayer = new TileMapLayer();
 		_secondaryLayer.Name = $"{Name}_loop_copy";
 		_secondaryLayer.Set("tile_set", Get("tile_set"));
@@ -281,13 +314,16 @@ public partial class BackgroundScroller : TileMapLayer
 		Node parent = GetParent();
 		if (parent == null)
 		{
+			// Without parent, we cannot add the runtime clone.
 			return;
 		}
 
 		parent.AddChild(_secondaryLayer);
 		_secondaryLayer.Owner = Owner;
+		// Keep copy behind the primary layer.
 		_secondaryLayer.ZIndex = ZIndex - 1;
 
+		// Start stacked vertically: copy above the primary.
 		_primaryY = 0.0f;
 		_secondaryY = -_patternHeightPixels;
 		Position = new Vector2(Position.X, _primaryY);
@@ -297,6 +333,7 @@ public partial class BackgroundScroller : TileMapLayer
 
 	public override void _Process(double delta)
 	{
+		// Early outs keep per-frame work minimal.
 		if (_patternHeightPixels <= 0.0f)
 		{
 			return;
@@ -310,6 +347,7 @@ public partial class BackgroundScroller : TileMapLayer
 		_primaryY += deltaY;
 		_secondaryY += deltaY;
 
+		// When one layer moves below the loop window, wrap it back by 2 heights.
 		if (_primaryY >= _patternHeightPixels)
 		{
 			_primaryY -= _patternHeightPixels * 2.0f;
@@ -319,6 +357,7 @@ public partial class BackgroundScroller : TileMapLayer
 			_secondaryY -= _patternHeightPixels * 2.0f;
 		}
 
+		// Apply computed positions for continuous scrolling.
 		Position = new Vector2(Position.X, _primaryY);
 		_secondaryLayer.Position = new Vector2(_secondaryLayer.Position.X, _secondaryY);
 	}
