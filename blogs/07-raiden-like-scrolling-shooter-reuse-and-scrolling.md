@@ -10,15 +10,17 @@ In the previous posts we built:
 
 Now we switch genres again: a **vertical scrolling shooter**.
 
-At first glance it looks very different from a platformer or an RPG, but the *architecture* can stay very similar:
+At first glance, this looks very different from a platformer or an RPG.
 
-- we still reuse scenes like building blocks
+But the *structure* of the game can stay surprisingly similar:
+
+- we still build using reusable scenes
 - we still keep shared run state in one place
-- we still rely on collision + signals to turn overlaps into gameplay
+- we still use collisions + signals to drive gameplay
 
 The big new ingredient is this:
 
-> The player stays roughly centered… and the world moves past them.
+> The player stays roughly in place… and the world moves past them.
 
 The full project used in this tutorial is available in the [project repository](/games/raiden-like/), so you can follow along with the same scenes and scripts.
 
@@ -26,7 +28,7 @@ The full project used in this tutorial is available in the [project repository](
 
 ## 1. Similarities: the reusable “backbone” shows up again
 
-Even though this is a new genre, you can reuse the same mental model from the platformer and RPG posts.
+Even though this is a new genre, you don’t need to start from zero. A lot of the same building blocks still apply.
 
 ### 1.1 Tiles are still the fastest way to build a world
 
@@ -38,7 +40,10 @@ The difference is *how the tiles are used*:
 - RPG tiles define walkable vs blocked space and guide navigation
 - shooter tiles are mostly **visual pattern + readability** (what the player can see while moving fast)
 
-So the tool is the same (`TileMapLayer`), but the design goal changes.
+So the tool is the same (`TileMapLayer`), but the goal is different.
+
+
+![raiden-tilemap](assets/raiden-tilemap.png)
 
 ---
 
@@ -58,9 +63,9 @@ Enemy bullet hits player / Health pickup collected / Coin collected
                 HUD updates
 ```
 
-In `raiden-like`, `GameManager` is intentionally small: it owns `Coins`, `Health`, and a configurable `MaxHealth`, and it emits signals whenever values change.
+In `raiden-like`, `GameManager` stays small and focused: it owns `Coins`, `Health`, and a configurable `MaxHealth`, and it emits signals whenever values change.
 
-```3:65:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\GameManager.cs
+```
 public partial class GameManager : Node
 {
 	[Signal]
@@ -134,7 +139,7 @@ This is a beginner-friendly pattern because the project has **one source of trut
 
 The HUD does not chase game objects to “pull” values. It simply listens to `GameManager` and updates text.
 
-```3:52:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\HUD.cs
+```
 public partial class HUD : CanvasLayer
 {
 	private Label _coinLabel;
@@ -191,51 +196,7 @@ Same idea as the RPG posts, just applied in a new genre.
 
 ---
 
-## 2. Difference: platformer vs RPG vs scrolling shooter
-
-Let’s summarize the key “feel” difference, because it affects how you build systems.
-
-### 2.1 Platformer: gravity dominates the loop
-
-Platformer loop (simplified):
-
-```text
-apply gravity → read jump input → MoveAndSlide → collisions
-```
-
-The world is mostly static, and the player traverses it.
-
----
-
-### 2.2 RPG: navigation + interactions dominate
-
-RPG loop (simplified):
-
-```text
-read input → MoveAndSlide → check interactions (coins, enemies, weapons)
-```
-
-No gravity, but the player explores a space with many interaction points.
-
----
-
-### 2.3 Scrolling shooter: forward motion dominates the readability problem
-
-Shooter loop (simplified):
-
-```text
-player moves inside bounds + shoots
-enemies spawn above → move down → shoot down
-background scrolls continuously to sell motion
-```
-
-Even if the player’s movement script is small, the **perception of motion** is a major part of the game.
-
-Which leads to our main system for this post: the scrolling background.
-
----
-
-## 3. Scrolling the world: looping a tile pattern cleanly
+## 2. Scrolling the world: looping a tile pattern cleanly
 
 The simplest way to create “infinite scrolling” is:
 
@@ -247,9 +208,11 @@ But there’s one problem:
 
 > If you scroll only one tilemap, you get empty space when it leaves the screen.
 
+![game screenshot](assets/raiden-game.png)
+
 So we use two copies of the same tilemap pattern.
 
-### 3.1 The “two layers” mental model
+### 2.1 The “two layers” mental model
 
 Think of it like this:
 
@@ -261,15 +224,15 @@ Both scroll down.
 When A goes fully below, it jumps back above B (and vice versa).
 ```
 
-This gives the illusion of an endless world.
+This creates the illusion of an endless scrolling world.
 
 ---
 
-### 3.2 `BackgroundScroller` in code
+### 2.2 `BackgroundScroller` in code
 
 In this project, the scrolling logic is implemented in a `TileMapLayer` script so it stays self-contained.
 
-Core ideas in the script:
+Here’s what the script is doing at a high level:
 
 - compute the pattern height in pixels using `GetUsedRect()` and `TileSet.TileSize`
 - create a second `TileMapLayer` at runtime
@@ -279,7 +242,7 @@ Core ideas in the script:
 
 Here is the full implementation:
 
-```3:82:C:\Users\62707\OneDrive\文档\Repos\godot-labs\games\raiden-like\scripts\BackgroundScroller.cs
+```
 public partial class BackgroundScroller : TileMapLayer
 {
 	[Export]
@@ -364,19 +327,19 @@ public partial class BackgroundScroller : TileMapLayer
 
 ---
 
-### 3.3 Why `CallDeferred` is used here
+### 2.3 Why `CallDeferred` is used here
 
-We create and add `_secondaryLayer` using `CallDeferred`.
+We create the second layer using `CallDeferred()`.
 
-This avoids subtle timing issues where the node tree isn’t ready for re-parenting or ownership changes at the exact moment `_Ready()` runs.
+This ensures the scene tree is fully ready before we add new nodes.
 
 Beginner rule of thumb:
 
-> If you create nodes and immediately add them to the scene tree during `_Ready()`, and you hit strange ordering issues, try `CallDeferred()`.
+> If you add nodes during `_Ready()` and something behaves strangely, try `CallDeferred()`.
 
 ---
 
-### 3.4 Why this is a good beginner solution
+### 2.4 Why this is a good beginner solution
 
 There are many ways to do scrolling backgrounds (parallax, textures, shaders). This tilemap approach is a solid early step because:
 
@@ -388,7 +351,7 @@ Once you understand *this* loop, you can later replace it with more advanced app
 
 ---
 
-## 4. Concepts Covered
+## 3. Concepts Covered
 
 | Concept | Why it matters in a scrolling shooter |
 | --- | --- |
