@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cyexrdol00o8b" path="res://assets/Tilemap/tilemap_packed.png" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://do4hhextfbde1" path="res://scenes/player.tscn" id="2_yqjtg"]
+[ext_resource type="AudioStream" uid="uid://b8r74t4i0pvfc" path="res://assets/music/backgroundmusicforvideos-roblox-minecraft-fortnite-video-game-music-358426.mp3" id="3_lnu2h"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
 texture = ExtResource("1_uwrxv")
@@ -170,3 +171,7 @@ tile_set = SubResource("TileSet_lnu2h")
 
 [node name="Player" parent="." unique_id=1394072162 instance=ExtResource("2_yqjtg")]
 position = Vector2(239, -150)
+
+[node name="BGMusic" type="AudioStreamPlayer2D" parent="." unique_id=1823811435]
+stream = ExtResource("3_lnu2h")
+autoplay = true
