@@ -15,6 +15,10 @@ run/main_scene="uid://13dq7jukqmje"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+SaveService="*res://scripts/SaveService.cs"
+
 [dotnet]
 
 project/assembly_name="arena-rogue"
