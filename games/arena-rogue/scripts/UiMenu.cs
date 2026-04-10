@@ -7,6 +7,15 @@ public partial class UiMenu : Control
 
 	public override void _Ready()
 	{
+		if (GetParent() is CanvasLayer)
+		{
+			SetAnchorsPreset(LayoutPreset.FullRect);
+			OffsetLeft = OffsetTop = 0;
+			OffsetRight = OffsetBottom = 0;
+		}
+
+		MouseFilter = MouseFilterEnum.Stop;
+
 		_clickSound = GetNode<AudioStreamPlayer2D>("ClickSound");
 		_buttonContainer = GetNode<VBoxContainer>("VBoxContainer");
 
@@ -26,7 +35,22 @@ public partial class UiMenu : Control
 	private void OnContinuePressed()
 	{
 		_clickSound.Play();
-		GetTree().ChangeSceneToFile("res://scenes/game.tscn");
+		var game = FindOwningGame();
+		if (game != null)
+			game.SetPauseMenuVisible(false);
+		else
+			GetTree().ChangeSceneToFile("res://scenes/game.tscn");
+	}
+
+	private Game FindOwningGame()
+	{
+		for (var n = GetParent(); n != null; n = n.GetParent())
+		{
+			if (n is Game g)
+				return g;
+		}
+
+		return null;
 	}
 
 	private void OnExitPressed()

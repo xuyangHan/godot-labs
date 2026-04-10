@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dfohvt7t0kabs"]
 
-[ext_resource type="Script" uid="uid://bv8ruj6isj5dv" path="res://scripts/UiMenu.cs" id="1_uimenu"]
 [ext_resource type="FontFile" uid="uid://q0x5ogmm0f2s" path="res://assets/fonts/PixelOperator8.ttf" id="1_j7rd5"]
+[ext_resource type="Script" uid="uid://bv8ruj6isj5dv" path="res://scripts/UiMenu.cs" id="1_uimenu"]
 [ext_resource type="AudioStream" uid="uid://xt0ptf75h2ks" path="res://assets/Sounds/jump-e.ogg" id="2_n5ae2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t00lx"]
