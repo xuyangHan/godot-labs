@@ -9,7 +9,7 @@ The goal of this project is to:
 * Learn the fundamentals of **game development architecture**
 * Build **small playable prototypes**
 * Share the learning process through **technical blog posts**
-* Eventually develop a **mobile farming game that connects gameplay with real-world activity**
+* Eventually develop a **real game**
 
 ---
 
@@ -34,12 +34,6 @@ Alongside development, I write a series of technical articles about **game syste
 7. **[From RPG to Scrolling Shooter](blogs/07-raiden-like-scrolling-shooter-reuse-and-scrolling.md)** – Reusing tiles + `GameManager` + HUD patterns in a new genre, and implementing an infinite scrolling background with a looping `TileMapLayer`.
 
 8. **[Enemies in a Scrolling Shooter](blogs/08-raiden-like-enemies-spawning-bullets-and-pickups.md)** – Enemy variants via exported properties, auto-spawning with a difficulty ramp, downward bullets, player damage flow, and pickup spawning connected back to `GameManager`.
-
-### Series arc
-
-- **Phase 1 (Fundamentals):** Intro to Godot + logic vs presentation (chess-based posts).
-- **Phase 2 (Applied gameplay):** Platformer essentials (core loop + systems thinking), then other game types.
-- **Phase 3 (In practice):** By game type – turn-based (e.g. Pokémon-style), action/real-time, then multiplayer (e.g. MOBA).
 
 ---
 
@@ -67,64 +61,6 @@ This repository explores questions such as:
 * How are **simulation-heavy games** like farming or city builders structured?
 
 The goal is to approach game development the same way engineers approach **system design**.
-
----
-
-## Learning Roadmap
-
-The project will progress through several stages.
-
-### Stage 1 — Godot Fundamentals
-
-Learn the core concepts of the engine:
-
-* Nodes and Scenes
-* Scene Tree architecture
-* Signals (event system)
-* Input handling
-* Game loops
-* Basic UI systems
-
-Small experiments will be added to the repository as prototypes.
-
----
-
-### Stage 2 — Game System Prototypes
-
-To understand how different genres work internally, I plan to build small prototypes for various game types.
-
-Examples include:
-
-* Turn-based battle system (inspired by Pokémon)
-* Puzzle mechanics
-* Idle / incremental systems
-* Farming simulation mechanics
-* Simple real-time combat
-
-Each prototype focuses on **a specific gameplay architecture**.
-
----
-
-### Stage 3 — Mobile Farming Game
-
-The long-term goal is to build a small **mobile farming simulation game**.
-
-Inspirations include:
-
-* Stardew Valley
-* Animal Crossing
-
-Core idea:
-
-Players grow crops and expand their farm, but **energy or currency is generated from real-world activity** such as walking or exercising.
-
-This data may be connected through **Apple Health** integration.
-
-The design aims to:
-
-* Encourage healthy habits
-* Prevent excessive playtime
-* Create a relaxing daily gameplay loop
 
 ---
 
